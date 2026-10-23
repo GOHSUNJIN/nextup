@@ -25,7 +25,12 @@ const STATUS_LABEL = {
   paused:   'Paused',
 }
 
-const NUM_COLORS = ['bg-brand', 'bg-black', 'bg-[#4A4740]', 'bg-yellow']
+const NUM_TILES = [
+  { bg: 'bg-black',     text: 'text-white' },
+  { bg: 'bg-brand',     text: 'text-white' },
+  { bg: 'bg-yellow',    text: 'text-black' },
+  { bg: 'bg-dark-cell', text: 'text-white' },
+]
 
 interface Props {
   num: number
@@ -39,14 +44,14 @@ interface Props {
 }
 
 export function CourtCard({ num, name, type, status, teamA, teamB, minsPlaying, className = '' }: Props) {
-  const tileColor = NUM_COLORS[(num - 1) % NUM_COLORS.length]
+  const tile = NUM_TILES[(num - 1) % NUM_TILES.length]
   const isEmpty = status === 'empty'
   const hasTeams = !isEmpty && teamA && teamB
 
   return (
     <article className={`bg-white border-2 border-black rounded-[18px] p-3.5 flex items-start gap-3 ${className}`}>
       <div
-        className={`${tileColor} w-10 h-10 rounded-xl border-2 border-black flex items-center justify-center shrink-0 font-heading font-extrabold italic text-2xl text-white leading-none`}
+        className={`${tile.bg} ${tile.text} w-10 h-10 rounded-xl border-2 border-black flex items-center justify-center shrink-0 font-heading font-extrabold italic text-2xl leading-none`}
       >
         {num}
       </div>

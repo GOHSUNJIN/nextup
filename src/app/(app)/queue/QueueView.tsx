@@ -145,24 +145,17 @@ export function QueueView({
   // ── STATE: no live session ──
   if (initialState === 'no_session') {
     return (
-      <div className="flex flex-col items-center justify-center flex-1 gap-5 text-center py-16">
-        <div className="w-16 h-16 rounded-2xl bg-muted border-2 border-black flex items-center justify-center">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#4A4740"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
-          </svg>
-        </div>
-        <div>
-          <h1 className="font-heading font-extrabold italic text-3xl uppercase">No live session</h1>
-          <p className="text-body text-sm mt-1">Check back when an event is live.</p>
+      <div className="flex flex-col gap-4">
+        <div className="relative bg-black rounded-[18px] overflow-hidden px-5 pt-5 pb-6">
+          <div className="absolute -top-6 -right-6 w-24 h-24 bg-yellow rounded-full opacity-90" />
+          <div className="absolute -top-3 -right-3 w-14 h-14 bg-yellow rounded-full" />
+          <div className="relative">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-[#BDB9AF] mb-2">Queue</p>
+            <h1 className="font-heading font-extrabold italic text-5xl uppercase leading-none text-white">
+              No session<br />live
+            </h1>
+            <p className="text-[#BDB9AF] text-sm mt-3">Check back when an event starts.</p>
+          </div>
         </div>
       </div>
     )
@@ -346,29 +339,40 @@ export function QueueView({
 
   // ── STATE: playing ──
   if (initialState === 'playing') {
+    const mins = matchData?.startedAt
+      ? Math.floor((Date.now() - new Date(matchData.startedAt).getTime()) / 60000)
+      : null
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="font-heading font-extrabold italic text-3xl uppercase">PLAYING</h1>
-        <div className="bg-black text-white rounded-[18px] px-5 py-7 text-center">
-          <div className="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse mx-auto mb-3" />
-          <p className="text-xs font-extrabold uppercase tracking-widest text-[#BDB9AF] mb-1">
-            Match in progress
-          </p>
-          <p className="font-heading font-extrabold italic text-4xl text-yellow uppercase">
-            {matchData?.courtName ?? 'Your court'}
-          </p>
-          {matchData?.startedAt && (
-            <p className="text-[#BDB9AF] text-sm mt-2">
-              {Math.floor(
-                (Date.now() - new Date(matchData.startedAt).getTime()) / 60000
-              )}{' '}
-              min
+        <div className="bg-black text-white rounded-[18px] px-5 py-6 relative overflow-hidden">
+          <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow rounded-full opacity-20" />
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse" />
+              <p className="text-xs font-extrabold uppercase tracking-widest text-[#BDB9AF]">Live match</p>
+            </div>
+            <p className="font-heading font-extrabold italic text-5xl text-yellow uppercase leading-none">
+              {matchData?.courtName ?? 'Your court'}
             </p>
-          )}
+            {mins !== null && (
+              <p className="text-[#BDB9AF] text-sm mt-2">{mins} min played</p>
+            )}
+          </div>
         </div>
-        <p className="text-center text-xs text-body">
-          Match will end when the admin taps &quot;End match&quot;.
-        </p>
+        {matchData?.teamA && matchData?.teamB && (
+          <div className="bg-white border-2 border-black rounded-[18px] p-4 flex items-center gap-3">
+            <div className="flex-1 text-center">
+              <p className="text-xs text-body mb-1">Your team</p>
+              <p className="font-bold text-sm">{matchData.teamA}</p>
+            </div>
+            <span className="font-heading font-extrabold italic text-xl text-body">vs</span>
+            <div className="flex-1 text-center">
+              <p className="text-xs text-body mb-1">Opponents</p>
+              <p className="font-bold text-sm">{matchData.teamB}</p>
+            </div>
+          </div>
+        )}
+        <p className="text-center text-xs text-body">Admin ends the match when it&apos;s done.</p>
       </div>
     )
   }
@@ -380,34 +384,36 @@ export function QueueView({
     const playerTeam = matchData?.playerTeam
     const myScore = playerTeam === 'a' ? scoreA : scoreB
     const oppScore = playerTeam === 'a' ? scoreB : scoreA
-    const won = myScore != null && oppScore != null && myScore > oppScore
+    const hasScore = myScore != null && oppScore != null
+    const won = hasScore && myScore! > oppScore!
 
     return (
       <div className="flex flex-col gap-4">
-        <div className="bg-black text-white rounded-[18px] px-5 py-7 text-center">
-          <p className="font-heading font-extrabold italic text-5xl text-yellow uppercase">
-            {won ? 'YOU WON!' : 'GOOD GAME!'}
-          </p>
-          {myScore != null && oppScore != null && (
-            <p className="text-3xl font-bold mt-2">
-              {myScore} – {oppScore}
+        <div className="bg-black text-white rounded-[18px] px-5 py-8 text-center relative overflow-hidden">
+          <div className="absolute -top-8 -right-8 w-36 h-36 bg-yellow rounded-full opacity-20" />
+          <div className="relative">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-[#BDB9AF] mb-3">
+              {matchData?.courtName ?? 'Match finished'}
             </p>
-          )}
-          <p className="text-[#BDB9AF] text-sm mt-2">{matchData?.courtName}</p>
+            <p className="font-heading font-extrabold italic text-6xl text-yellow uppercase leading-none">
+              {won ? 'YOU WON!' : 'GOOD GAME!'}
+            </p>
+            {hasScore && (
+              <p className="font-heading font-extrabold italic text-4xl text-white mt-3">
+                {myScore} – {oppScore}
+              </p>
+            )}
+          </div>
         </div>
 
-        <BigActionButton type="button" size="lg" disabled={pending} onClick={handleRequeue}>
-          {pending ? '…' : 'REJOIN QUEUE'}
-        </BigActionButton>
-        <BigActionButton
-          type="button"
-          variant="white"
-          size="md"
-          disabled={pending}
-          onClick={handleBreak}
-        >
-          Take a break
-        </BigActionButton>
+        <div className="flex flex-col gap-2">
+          <BigActionButton type="button" size="lg" disabled={pending} onClick={handleRequeue}>
+            {pending ? '…' : 'REJOIN QUEUE'}
+          </BigActionButton>
+          <BigActionButton type="button" variant="white" size="md" disabled={pending} onClick={handleBreak}>
+            Take a break
+          </BigActionButton>
+        </div>
       </div>
     )
   }
@@ -455,23 +461,19 @@ export function QueueView({
   if (initialState === 'away') {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="font-heading font-extrabold italic text-3xl uppercase">AWAY</h1>
-        <div className="bg-white border-2 border-black rounded-[18px] p-5 text-center">
-          <p className="font-bold text-lg">You&apos;ve been marked away</p>
-          <p className="text-body text-sm mt-1">
-            You were on break for too long. You can still rejoin!
+        <div className="bg-black text-white rounded-[18px] px-5 py-7 text-center">
+          <p className="text-xs font-extrabold uppercase tracking-widest text-[#BDB9AF] mb-2">Status</p>
+          <p className="font-heading font-extrabold italic text-5xl text-[#BDB9AF] uppercase leading-none">
+            AWAY
+          </p>
+          <p className="text-[#BDB9AF] text-sm mt-3">
+            Break time expired. You can still rejoin anytime.
           </p>
         </div>
         <BigActionButton type="button" size="lg" disabled={pending} onClick={handleRejoin}>
           {pending ? '…' : 'REJOIN QUEUE'}
         </BigActionButton>
-        <BigActionButton
-          type="button"
-          variant="white"
-          size="md"
-          disabled={pending}
-          onClick={handleDone}
-        >
+        <BigActionButton type="button" variant="white" size="md" disabled={pending} onClick={handleDone}>
           I&apos;m done for tonight
         </BigActionButton>
       </div>
