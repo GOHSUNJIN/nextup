@@ -6,7 +6,11 @@ import { AdminCourtsTab } from './AdminCourtsTab'
 import { AdminQueueTab } from './AdminQueueTab'
 import { AdminCheckinTab } from './AdminCheckinTab'
 
-export default async function AdminPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>
+}) {
   const { tab = 'courts' } = await searchParams
   const supabase = await createClient()
 
@@ -15,6 +19,13 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     .select('id, name, start_time, end_time, max_players')
     .eq('status', 'live')
     .maybeSingle()
+
+  const { data: upcomingSessions } = await supabase
+    .from('sessions')
+    .select('id, name, date, start_time')
+    .eq('status', 'upcoming')
+    .order('start_time')
+    .limit(5)
 
   const tabs = [
     { id: 'courts', label: 'Courts' },
@@ -27,7 +38,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       {/* Header */}
       <div className="flex items-center justify-between pt-1">
         <h1 className="font-heading font-extrabold italic text-3xl uppercase">ADMIN</h1>
-        <Link href="/admin/events/new" className="h-9 px-3 border-2 border-black rounded-full flex items-center text-xs font-bold gap-1">
+        <Link
+          href="/admin/events/new"
+          className="h-9 px-3 border-2 border-black rounded-full flex items-center text-xs font-bold gap-1"
+        >
           + New event
         </Link>
       </div>
@@ -38,7 +52,11 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           <Link
             key={t.id}
             href={`/admin?tab=${t.id}`}
-            className={`flex-1 h-9 rounded-[10px] flex items-center justify-center text-sm font-bold transition-colors ${tab === t.id ? 'bg-white border-2 border-black shadow-[2px_2px_0_#111]' : 'text-body'}`}
+            className={`flex-1 h-9 rounded-[10px] flex items-center justify-center text-sm font-bold transition-colors ${
+              tab === t.id
+                ? 'bg-white border-2 border-black shadow-[2px_2px_0_#111]'
+                : 'text-body'
+            }`}
           >
             {t.label}
           </Link>
@@ -57,7 +75,12 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       )}
 
       {/* Tab content */}
-      {tab === 'courts' && <AdminCourtsTab session={session} />}
+      {tab === 'courts' && (
+        <AdminCourtsTab
+          session={session}
+          upcomingSessions={upcomingSessions}
+        />
+      )}
       {tab === 'queue' && <AdminQueueTab session={session} />}
       {tab === 'checkin' && <AdminCheckinTab session={session} />}
     </div>

@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -105,6 +106,20 @@ export async function endMatch(matchId: string, scoreA: number, scoreB: number) 
       .in('status', ['playing', 'assigned'])
   }
 
+  if (match.session_id) {
+    const admin = createAdminClient()
+    await admin.rpc('fill_courts', { p_session_id: match.session_id })
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/courts')
+}
+
+export async function startSession(sessionId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase.rpc('start_session', { p_session_id: sessionId })
+  const result = data as { success?: boolean; error?: string } | null
+  if (result?.error) return { error: result.error }
   revalidatePath('/admin')
   revalidatePath('/courts')
 }

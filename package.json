@@ -16,7 +16,8 @@
     "@tailwindcss/postcss": "^4.3.3",
     "next": "^15.5.28",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-qr-code": "^2.2.0"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
