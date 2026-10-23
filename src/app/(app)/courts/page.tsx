@@ -69,7 +69,7 @@ export default async function CourtsPage() {
         )}
 
         {/* How it works */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 mt-2">
           <p className="text-xs font-extrabold uppercase tracking-widest text-body px-1">How it works</p>
           {[
             { n: '1', title: 'Check in at the venue', body: 'Enter the 4-digit code from the admin screen when you arrive.', color: 'bg-yellow' },

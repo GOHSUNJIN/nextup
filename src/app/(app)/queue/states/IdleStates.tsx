@@ -20,7 +20,7 @@ export function NoSession() {
         </div>
       </Link>
       {/* What you get when a session is live */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 mt-2">
         <p className="text-xs font-extrabold uppercase tracking-widest text-body px-1">When a session is live</p>
         {[
           {
