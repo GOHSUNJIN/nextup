@@ -96,8 +96,8 @@ export function SplashScreen() {
         </div>
       </div>
 
-      {/* Bottom: progress bar + logo */}
-      <div className="absolute left-0 right-0 bottom-10 flex flex-col items-center gap-9">
+      {/* Bottom: progress bar */}
+      <div className="absolute left-0 right-0 bottom-10 flex flex-col items-center">
         {/* Progress bar */}
         <div
           role="progressbar"
@@ -160,14 +160,6 @@ export function SplashScreen() {
           </svg>
         </div>
 
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/picklepedia-logo.png"
-          alt="Picklepedia"
-          width={104}
-          height={95}
-          style={{ filter: 'drop-shadow(2px 2px 0 #111111)', display: 'block' }}
-        />
       </div>
     </div>
   )

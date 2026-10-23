@@ -87,16 +87,22 @@ export default async function HistoryPage() {
       )}
 
       {matches.length === 0 && (
-        <div className="flex flex-col items-center gap-3 py-12 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-muted border-2 border-black flex items-center justify-center shadow-[4px_4px_0_#111]">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4A4740" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" />
-            </svg>
+        <div className="flex flex-col gap-4">
+          <div className="relative bg-black rounded-[18px] overflow-hidden px-5 pt-5 pb-8">
+            <div className="absolute -top-10 -right-10 w-36 h-36 bg-yellow rounded-full opacity-20" />
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow rounded-full opacity-40" />
+            <div className="relative">
+              <p className="text-xs font-extrabold uppercase tracking-widest text-[#BDB9AF] mb-2">History</p>
+              <h1 className="font-heading font-extrabold italic text-7xl text-yellow uppercase leading-none">0</h1>
+              <p className="font-heading font-extrabold italic text-3xl uppercase leading-none text-white mt-1">games played</p>
+              <p className="text-[#BDB9AF] text-sm mt-3">Join a session to start your record.</p>
+            </div>
           </div>
-          <div>
-            <p className="font-heading font-extrabold italic text-2xl uppercase">No games yet</p>
-            <p className="text-body text-sm mt-1">Your match history will appear here.</p>
-          </div>
+          <Link href="/courts">
+            <div className="w-full h-[52px] border-2 border-black bg-black text-white rounded-[14px] font-heading font-extrabold italic text-xl uppercase flex items-center justify-center shadow-[4px_4px_0_#444]">
+              FIND A SESSION
+            </div>
+          </Link>
         </div>
       )}
 

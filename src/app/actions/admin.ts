@@ -6,6 +6,16 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { sendPushToPlayers } from '@/lib/push'
 
+async function requireStaff() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+  const { data: profile } = await createAdminClient()
+    .from('profiles').select('role').eq('id', user.id).single()
+  if (!profile || !['admin', 'co_admin'].includes(profile.role)) return null
+  return user
+}
+
 export async function endSession(sessionId: string) {
   const supabase = await createClient()
   const { data, error } = await supabase.rpc('end_session', { p_session_id: sessionId })
@@ -57,9 +67,9 @@ export async function handleNoShows(sessionId: string) {
 }
 
 export async function endMatch(matchId: string, scoreA: number, scoreB: number) {
+  const user = await requireStaff()
+  if (!user) return { error: 'Not authorized' }
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Not signed in' }
 
   const { data: match } = await supabase
     .from('matches')
@@ -108,6 +118,8 @@ export async function startSession(sessionId: string) {
 }
 
 export async function changeCourtType(courtId: string, type: string) {
+  const user = await requireStaff()
+  if (!user) return { error: 'Not authorized' }
   const supabase = await createClient()
   await supabase.from('courts').update({ type, next_type: type }).eq('id', courtId)
   revalidatePath('/admin')
@@ -115,9 +127,9 @@ export async function changeCourtType(courtId: string, type: string) {
 }
 
 export async function addWalkIn(sessionId: string, name: string, gender: string) {
+  const user = await requireStaff()
+  if (!user) return { error: 'Not authorized' }
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Not signed in' }
 
   const { data: walkIn, error } = await createAdminClient()
     .from('profiles')

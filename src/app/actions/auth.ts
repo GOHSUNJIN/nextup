@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 
 export async function signUp(formData: FormData) {
@@ -103,9 +104,12 @@ export async function updateProfile(formData: FormData) {
   const name = (formData.get('name') as string).trim()
   const phone = (formData.get('phone') as string).trim() || null
   const gender = (formData.get('gender') as string) || undefined
-  const avatarUrl = (formData.get('avatar_url') as string).trim() || undefined
+  const rawAvatar = (formData.get('avatar_url') as string).trim()
 
   if (!name) return { error: 'Name is required.' }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+  const avatarUrl = rawAvatar && rawAvatar.startsWith(supabaseUrl) ? rawAvatar : (rawAvatar === '' ? '' : undefined)
 
   const updateData: Record<string, unknown> = { id: user.id, name, phone }
   if (gender) updateData.gender = gender
@@ -119,6 +123,25 @@ export async function updateProfile(formData: FormData) {
   }
 
   redirect('/profile')
+}
+
+export async function updatePreferences(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not signed in' }
+
+  const admin = createAdminClient()
+  const { error } = await admin.from('profiles').update({
+    push_enabled: formData.get('push_enabled') === 'on',
+    email_enabled: formData.get('email_enabled') === 'on',
+    next_ping_enabled: formData.get('next_ping_enabled') === 'on',
+    no_strong_courts: formData.get('no_strong_courts') === 'on',
+    women_courts_only: formData.get('women_courts_only') === 'on',
+  }).eq('id', user.id)
+
+  if (error) return { error: error.message }
+  revalidatePath('/profile/settings')
+  return { success: true }
 }
 
 export async function deleteAccount() {
