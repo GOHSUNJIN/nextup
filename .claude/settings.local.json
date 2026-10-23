@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(npm i *)",
+      "Bash(vercel *)",
+      "Bash(python3 *)",
+      "Bash(npx create-next-app@latest *)",
+      "Bash(mkdir /tmp/nextup-scaffold)",
+      "Read(//tmp/**)",
+      "Bash(cp -r /tmp/nextup-scaffold/src /c/Users/Lenovo/Desktop/NextUp/)",
+      "Bash(cp /tmp/nextup-scaffold/next.config.ts /c/Users/Lenovo/Desktop/NextUp/)",
+      "Bash(cp /tmp/nextup-scaffold/tsconfig.json /c/Users/Lenovo/Desktop/NextUp/)",
+      "Bash(cp /tmp/nextup-scaffold/eslint.config.mjs /c/Users/Lenovo/Desktop/NextUp/)",
+      "Bash(cp /tmp/nextup-scaffold/next-env.d.ts /c/Users/Lenovo/Desktop/NextUp/)",
+      "Bash(npm install *)",
+      "Bash(npx supabase *)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(npm run *)",
+      "Bash(git add *)",
+      "Bash(git rm *)"
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Colors ── */
+  --color-brand:        #D2281F;
+  --color-brand-logo:   #E3342F;
+  --color-yellow:       #FFC72C;
+  --color-black:        #111111;
+  --color-white:        #FFFFFF;
+  --color-bg:           #F4F2EC;
+  --color-muted:        #ECEAE4;
+  --color-body:         #4A4740;
+  --color-success-bg:   #DDF3E4;
+  --color-success-text: #17603A;
+  --color-danger-bg:    #FDE7E5;
+  --color-danger-text:  #B3201A;
+
+  /* Dark surface */
+  --color-dark-card:    #111111;
+  --color-dark-cell:    #232323;
+  --color-dark-divider: #3A3A3A;
+  --color-dark-muted:   #BDB9AF;
+  --color-dark-body:    #D6D3CB;
+
+  /* ── Fonts ── */
+  --font-sans:      var(--font-inter), system-ui, sans-serif;
+  --font-heading:   var(--font-barlow-condensed), sans-serif;
+  --font-wordmark:  var(--font-luckiest-guy), cursive;
+
+  /* ── Radii ── */
+  --radius-card:   18px;
+  --radius-btn:    14px;
+  --radius-btnlg:  16px;
+  --radius-pill:   999px;
+  --radius-frame:  36px;
+
+  /* ── Shadows ── */
+  --shadow-hard: 4px 4px 0 #111111;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-black);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+}
