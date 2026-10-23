@@ -210,6 +210,13 @@ Build "NextUp by Picklepedia" (short name: NextUp), a mobile-first web app that 
 - Timers (check-in, requeue/break, break limit, end match undo, QR expiry): store deadlines in the database and evaluate expiry on every read or write. pg_cron sweep every minute as backup. Never rely on cron for second-level precision
 - Offline banner ("You're offline. Reconnecting...") with last-known position dimmed and skeleton placeholders
 
+## Future: tab-isolated auth
+- Current auth uses `@supabase/ssr` with HTTP cookies, which are shared across all tabs in the same browser
+- Future update: move browser auth to `sessionStorage` (tab-scoped, persists through refresh, isolated between tabs) using `@supabase/supabase-js` `createClient` with `auth.storage = window.sessionStorage`
+- This requires converting all auth-dependent server components to client components (profile, queue, history, admin layouts) since the server can no longer read auth state from cookies
+- Middleware is simplified to root-redirect only; auth protection moves to client-side guards and Supabase RLS
+- Motivation: allow admins and developers to be logged in as two different accounts in two browser tabs simultaneously for testing and multi-device simulation
+
 ## Data model (suggested, refine as needed)
 - profiles: id, name, gender, gender_verified, role (player / co_admin / admin), dupr_username, dupr_rating, dupr_verified, phone (unique, nullable for walk-ins), email (unique, nullable for walk-ins), email_verified, skill_tier, verified_tier, women_courts_only, no_strong_courts, saved_partner_id, avatar_url, push_enabled, email_enabled, next_ping_enabled, is_walk_in, banned, deleted_at
 - sessions: id, name, date, start_time, end_time, max_players, match_reminder_minutes, status (upcoming / live / ended), is_daily_auto
