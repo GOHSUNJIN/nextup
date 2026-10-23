@@ -4,18 +4,16 @@ import { Suspense } from 'react'
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { signIn, signInWithMagicLink } from '@/app/actions/auth'
+import { signIn } from '@/app/actions/auth'
 import { PasswordInput } from '@/components/ui/PasswordInput'
 
 function LoginContent() {
   const [error, setError] = useState<string | null>(null)
-  const [magicSent, setMagicSent] = useState(false)
-  const [mode, setMode] = useState<'password' | 'magic'>('password')
   const [pending, startTransition] = useTransition()
   const searchParams = useSearchParams()
   const next = searchParams.get('next') || '/courts'
 
-  async function handlePasswordLogin(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     const fd = new FormData(e.currentTarget)
@@ -23,17 +21,6 @@ function LoginContent() {
     startTransition(async () => {
       const result = await signIn(fd)
       if (result?.error) setError(result.error)
-    })
-  }
-
-  async function handleMagicLink(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError(null)
-    const fd = new FormData(e.currentTarget)
-    startTransition(async () => {
-      const result = await signInWithMagicLink(fd)
-      if (result?.error) setError(result.error)
-      else setMagicSent(true)
     })
   }
 
@@ -56,82 +43,38 @@ function LoginContent() {
           <h1 className="font-heading font-extrabold italic text-5xl uppercase leading-none text-white">
             Welcome<br /><span className="text-yellow">Back</span>
           </h1>
-          <p className="text-[#BDB9AF] text-sm mt-3">Sign in to join the queue.</p>
+          <p className="text-[#BDB9AF] text-sm mt-3">Sign in with your phone number.</p>
         </div>
       </div>
 
       {/* Form card */}
       <div className="bg-white border-2 border-black rounded-[20px] shadow-[4px_4px_0_#333] p-5 flex flex-col gap-4">
-        {/* Mode toggle */}
-        <div className="flex gap-1.5 p-1 bg-muted rounded-[12px] border-2 border-black">
-          {(['password', 'magic'] as const).map(m => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => { setMode(m); setError(null); setMagicSent(false) }}
-              className={`flex-1 h-9 rounded-[8px] text-sm font-bold transition-all ${
-                mode === m
-                  ? 'bg-white border-2 border-black shadow-[2px_2px_0_#111]'
-                  : 'text-body'
-              }`}
-            >
-              {m === 'password' ? 'Password' : 'Magic link'}
-            </button>
-          ))}
-        </div>
-
-        {mode === 'password' ? (
-          <form onSubmit={handlePasswordLogin} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold" htmlFor="email">Email</label>
-              <input
-                id="email" name="email" type="email" required autoComplete="email"
-                placeholder="you@example.com"
-                className="h-12 rounded-[12px] border-2 border-black bg-white px-3.5 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold" htmlFor="password">Password</label>
-              <PasswordInput id="password" name="password" autoComplete="current-password" placeholder="Your password" />
-            </div>
-            {error && (
-              <p className="text-sm text-danger-text bg-danger-bg rounded-xl px-3 py-2">{error}</p>
-            )}
-            <button
-              type="submit"
-              disabled={pending}
-              className="w-full h-[56px] border-2 border-black bg-brand text-white rounded-[16px] font-heading font-extrabold italic text-[22px] uppercase shadow-[4px_4px_0_#111] disabled:opacity-50 transition-opacity"
-            >
-              {pending ? 'Signing in…' : 'SIGN IN'}
-            </button>
-          </form>
-        ) : magicSent ? (
-          <div className="bg-success-bg border-2 border-black rounded-[14px] p-5 text-center flex flex-col gap-2">
-            <p className="font-bold text-success-text">Check your inbox!</p>
-            <p className="text-sm text-body">We sent a magic link to your email. Click it to sign in — no password needed.</p>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold" htmlFor="phone">Phone number</label>
+            <input
+              id="phone" name="phone" type="tel" required autoComplete="tel"
+              placeholder="+65 9123 4567"
+              className="h-12 rounded-[12px] border-2 border-black bg-white px-3.5 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
+            />
           </div>
-        ) : (
-          <form onSubmit={handleMagicLink} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold" htmlFor="magic-email">Email</label>
-              <input
-                id="magic-email" name="email" type="email" required autoComplete="email"
-                placeholder="you@example.com"
-                className="h-12 rounded-[12px] border-2 border-black bg-white px-3.5 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
-              />
-            </div>
-            {error && (
-              <p className="text-sm text-danger-text bg-danger-bg rounded-xl px-3 py-2">{error}</p>
-            )}
-            <button
-              type="submit"
-              disabled={pending}
-              className="w-full h-[56px] border-2 border-black bg-brand text-white rounded-[16px] font-heading font-extrabold italic text-[22px] uppercase shadow-[4px_4px_0_#111] disabled:opacity-50 transition-opacity"
-            >
-              {pending ? 'Sending…' : 'SEND MAGIC LINK'}
-            </button>
-          </form>
-        )}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold" htmlFor="password">Password</label>
+            <PasswordInput id="password" name="password" autoComplete="current-password" placeholder="Your password" />
+          </div>
+
+          {error && (
+            <p className="text-sm text-danger-text bg-danger-bg rounded-xl px-3 py-2">{error}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={pending}
+            className="w-full h-[56px] border-2 border-black bg-brand text-white rounded-[16px] font-heading font-extrabold italic text-[22px] uppercase shadow-[4px_4px_0_#111] disabled:opacity-50 transition-opacity"
+          >
+            {pending ? 'Signing in…' : 'SIGN IN'}
+          </button>
+        </form>
       </div>
 
       <p className="text-center text-sm text-white/50">

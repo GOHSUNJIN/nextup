@@ -4,19 +4,25 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { headers } from 'next/headers'
+
+// Phone number → internal email identity (no real emails sent)
+function phoneToEmail(phone: string): string {
+  return phone.replace(/\D/g, '') + '@nextup.app'
+}
 
 export async function signUp(formData: FormData) {
   const supabase = await createClient()
 
-  const email = formData.get('email') as string
+  const phone = (formData.get('phone') as string).trim()
   const password = formData.get('password') as string
   const name = formData.get('name') as string
-  const phone = formData.get('phone') as string
   const gender = formData.get('gender') as 'male' | 'female'
   const pdpa = formData.get('pdpa') === 'on'
 
+  if (!phone) return { error: 'Phone number is required.' }
   if (!pdpa) return { error: 'You must accept the privacy policy to create an account.' }
+
+  const email = phoneToEmail(phone)
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -26,14 +32,12 @@ export async function signUp(formData: FormData) {
 
   if (error) return { error: error.message }
 
-  // Upsert profile — trigger may already have created the row, but gender/phone/pdpa aren't set by it
   const { data: { user } } = await supabase.auth.getUser()
   if (user) {
     await supabase.from('profiles').upsert({
       id: user.id,
       name,
-      email: user.email,
-      phone: phone || null,
+      phone,
       gender: gender as 'male' | 'female',
       pdpa_consent_at: new Date().toISOString(),
     }, { onConflict: 'id' })
@@ -45,29 +49,16 @@ export async function signUp(formData: FormData) {
 export async function signIn(formData: FormData) {
   const supabase = await createClient()
 
-  const email = formData.get('email') as string
+  const phone = (formData.get('phone') as string).trim()
   const password = formData.get('password') as string
+  const email = phoneToEmail(phone)
 
   const { error } = await supabase.auth.signInWithPassword({ email, password })
 
-  if (error) return { error: error.message }
+  if (error) return { error: 'Incorrect phone number or password.' }
 
   const next = formData.get('next') as string || '/courts'
   redirect(next)
-}
-
-export async function signInWithMagicLink(formData: FormData) {
-  const supabase = await createClient()
-  const origin = (await headers()).get('origin')
-  const email = formData.get('email') as string
-
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: `${origin}/auth/callback` },
-  })
-
-  if (error) return { error: error.message }
-  return { success: true }
 }
 
 export async function signOut() {
@@ -129,7 +120,6 @@ export async function deleteAccount() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Not signed in' }
 
-  // Soft-delete: anonymise profile data
   await supabase.from('profiles').update({
     name: 'Former player',
     phone: null,
