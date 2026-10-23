@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Barlow_Condensed, Luckiest_Guy } from 'next/font/google'
 import './globals.css'
-import { SplashScreen } from '@/components/SplashScreen'
+import { SplashScreen } from '@/components/layout/SplashScreen'
 
 const inter = Inter({
   subsets: ['latin'],

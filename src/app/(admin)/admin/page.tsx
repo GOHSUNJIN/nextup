@@ -2,10 +2,10 @@ export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { AdminCourtsTab } from './AdminCourtsTab'
-import { AdminQueueTab } from './AdminQueueTab'
-import { AdminCheckinTab } from './AdminCheckinTab'
-import { EndSessionButton, HandleNoShowsButton } from './EndSessionButton'
+import { AdminCourtsTab } from './components/AdminCourtsTab'
+import { AdminQueueTab } from './components/AdminQueueTab'
+import { AdminCheckinTab } from './components/AdminCheckinTab'
+import { EndSessionButton, HandleNoShowsButton } from './components/EndSessionButton'
 
 export default async function AdminPage({
   searchParams,
