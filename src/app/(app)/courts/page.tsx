@@ -56,6 +56,41 @@ export default async function CourtsPage() {
     .eq('session_id', session.id)
     .order('name')
 
+  const courtIds = courts?.map(c => c.id) ?? []
+  let matchMap: Record<string, { teamA: string; teamB: string; minsPlaying?: number }> = {}
+
+  if (courtIds.length > 0) {
+    const { data: activeMatches } = await supabase
+      .from('matches')
+      .select('id, court_id, started_at, team_a, team_b')
+      .in('court_id', courtIds)
+      .is('ended_at', null)
+
+    if (activeMatches?.length) {
+      const allPlayerIds = [...new Set(activeMatches.flatMap(m => [...(m.team_a ?? []), ...(m.team_b ?? [])]))]
+      const { data: players } = await supabase
+        .from('profiles')
+        .select('id, name')
+        .in('id', allPlayerIds)
+
+      const playerName = (id: string) => {
+        const p = players?.find(p => p.id === id)
+        if (!p?.name) return '?'
+        const parts = p.name.trim().split(' ')
+        return parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0]}.` : parts[0]
+      }
+
+      for (const m of activeMatches) {
+        const teamA = (m.team_a ?? []).map(playerName).join(' & ')
+        const teamB = (m.team_b ?? []).map(playerName).join(' & ')
+        const minsPlaying = m.started_at
+          ? Math.floor((Date.now() - new Date(m.started_at).getTime()) / 60000)
+          : undefined
+        matchMap[m.court_id] = { teamA, teamB, minsPlaying }
+      }
+    }
+  }
+
   // Get playing count and queue count
   const { count: playingCount } = await supabase
     .from('queue_entries')
@@ -108,6 +143,9 @@ export default async function CourtsPage() {
             name={court.name}
             type={court.type as 'open' | 'strong' | 'casual' | 'women' | 'mixed'}
             status={court.status as 'empty' | 'assigned' | 'playing' | 'paused'}
+            teamA={matchMap[court.id]?.teamA}
+            teamB={matchMap[court.id]?.teamB}
+            minsPlaying={matchMap[court.id]?.minsPlaying}
           />
         ))}
       </div>
