@@ -3,35 +3,35 @@ import Link from 'next/link'
 const FAQS = [
   {
     q: 'How does the queue work?',
-    a: 'Check in at the venue, then join the queue. When a court is free, the system assigns you and your partner(s) automatically. You\'ll get a notification when it\'s your turn.',
+    a: 'Check in at the venue, then join the queue. The system assigns you to a court automatically when it\'s your turn.',
   },
   {
     q: 'What are court types?',
-    a: 'Open courts are for all players. Casual courts are for social/beginners. Strong courts are for competitive players. Women\'s courts are reserved for female players. Mixed courts have at least one player of each gender per team.',
+    a: 'Open: all levels. Casual: social/beginners. Strong: competitive. Women\'s: female players only. Mixed: one of each gender per team.',
   },
   {
     q: 'Can I choose my partner?',
-    a: 'Yes — send a pair request to another player in the queue. If they accept, you\'ll be assigned to the same court together.',
+    a: 'Yes — send a pair request to another player in the queue. If they accept, you\'ll share a court.',
   },
   {
-    q: 'What happens if I miss my turn?',
-    a: 'You\'ll receive a notification when you\'re next. If you don\'t respond in time, you may be moved to the back of the queue or given a strike depending on session rules.',
+    q: 'What if I miss my turn?',
+    a: 'You\'ll be notified when you\'re next. No response may move you to the back of the queue.',
   },
   {
     q: 'What is the skill tier for?',
-    a: 'Skill tiers (D, C, B, A, Open) help the system assign balanced courts in competitive sessions. In casual sessions all tiers play together.',
+    a: 'Tiers (D, C, B, A, Open) help balance courts in competitive sessions.',
   },
   {
     q: 'How is my gender used?',
-    a: 'Gender is only used to enforce Women\'s and Mixed court rules. It is never shared with third parties.',
+    a: 'Only to enforce Women\'s and Mixed court rules. Never shared with third parties.',
   },
 ]
 
 export default function FaqPage() {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-3">
       <div className="flex items-center gap-3">
-        <Link href="/profile" className="w-9 h-9 rounded-full border-2 border-black flex items-center justify-center bg-white">
+        <Link href="/profile" className="w-9 h-9 rounded-full border-2 border-black flex items-center justify-center bg-white shrink-0">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6-6" />
           </svg>
@@ -39,32 +39,30 @@ export default function FaqPage() {
         <h1 className="font-heading font-extrabold italic text-3xl uppercase">HELP &amp; FAQ</h1>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="bg-white border-2 border-black rounded-[18px] overflow-hidden divide-y-2 divide-black">
         {FAQS.map((item, i) => (
-          <details key={i} className="bg-white border-2 border-black rounded-[18px] overflow-hidden group">
-            <summary className="flex items-center justify-between px-4 py-3.5 cursor-pointer list-none">
-              <span className="text-sm font-bold pr-3">{item.q}</span>
+          <details key={i} className="group">
+            <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none gap-3">
+              <span className="text-sm font-bold">{item.q}</span>
               <svg
                 className="shrink-0 transition-transform group-open:rotate-180"
-                width="16" height="16" viewBox="0 0 24 24" fill="none"
+                width="14" height="14" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
               >
                 <path d="m6 9 6 6 6-6" />
               </svg>
             </summary>
-            <div className="px-4 pb-4">
-              <p className="text-sm text-body leading-relaxed">{item.a}</p>
+            <div className="px-4 pb-3 border-t-2 border-black bg-muted">
+              <p className="text-xs text-body leading-relaxed pt-2">{item.a}</p>
             </div>
           </details>
         ))}
       </div>
 
-      <div id="privacy" className="bg-white border-2 border-black rounded-[18px] p-4">
-        <p className="text-xs font-extrabold uppercase tracking-widest text-body mb-2">Privacy Policy</p>
-        <p className="text-sm text-body leading-relaxed">
-          NextUp by Picklepedia collects your name, email, phone number, and gender solely for the purpose of running pickleball sessions. This data is not shared with third parties. You may request deletion of your account at any time via Settings. We comply with Singapore&apos;s Personal Data Protection Act (PDPA).
-        </p>
-      </div>
+      <p className="text-center text-xs text-body">
+        We comply with Singapore&apos;s PDPA. Your data is never shared.{' '}
+        <Link href="/profile/faq#privacy" className="font-bold underline">Privacy policy</Link>
+      </p>
     </div>
   )
 }

@@ -87,7 +87,7 @@ export default async function HistoryPage() {
       )}
 
       {matches.length === 0 && (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           <div className="relative bg-black rounded-[18px] overflow-hidden px-5 pt-5 pb-8">
             <div className="absolute -top-10 -right-10 w-36 h-36 bg-yellow rounded-full opacity-20" />
             <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow rounded-full opacity-40" />
@@ -98,11 +98,45 @@ export default async function HistoryPage() {
               <p className="text-[#BDB9AF] text-sm mt-3">Join a session to start your record.</p>
             </div>
           </div>
-          <Link href="/courts">
+          <Link href="/events">
             <div className="w-full h-[52px] border-2 border-black bg-brand text-white rounded-[14px] font-heading font-extrabold italic text-xl uppercase flex items-center justify-center shadow-[4px_4px_0_#111]">
               FIND A SESSION
             </div>
           </Link>
+          {/* Stats preview */}
+          <div className="bg-white border-2 border-black rounded-[18px] overflow-hidden">
+            <div className="px-4 py-2 border-b-2 border-black bg-muted">
+              <p className="text-xs font-extrabold uppercase tracking-widest text-body">Your stats will show here</p>
+            </div>
+            <div className="grid grid-cols-3 divide-x-2 divide-black">
+              {[
+                { label: 'Games', value: '—' },
+                { label: 'Wins', value: '—' },
+                { label: 'Win rate', value: '—' },
+              ].map(s => (
+                <div key={s.label} className="flex flex-col items-center py-4 gap-1">
+                  <span className="font-heading font-extrabold italic text-3xl text-body">{s.value}</span>
+                  <span className="text-xs text-body">{s.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-body px-1">After each game</p>
+            {[
+              { icon: '🏆', title: 'Win/loss tracked', body: 'Every game you play is logged with the score and opponents.' },
+              { icon: '📊', title: 'Win rate calculated', body: 'See your win percentage build as you play more sessions.' },
+              { icon: '👥', title: 'Players you\'ve faced', body: 'Your match history shows who was on each court with you.' },
+            ].map(item => (
+              <div key={item.title} className="bg-white border-2 border-black rounded-[16px] p-3 flex gap-3 items-start">
+                <div className="w-8 h-8 rounded-xl bg-muted border-2 border-black flex items-center justify-center shrink-0 text-base">{item.icon}</div>
+                <div>
+                  <p className="font-bold text-sm">{item.title}</p>
+                  <p className="text-xs text-body mt-0.5">{item.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

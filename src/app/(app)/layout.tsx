@@ -25,9 +25,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
     // If profile row never got created, seed a minimal one
     if (!profile) {
-      const fallbackName = user.email?.split('@')[0] ?? 'Player'
+      const fallbackName = (user.user_metadata?.name as string | undefined) ?? 'Player'
       await admin.from('profiles').upsert(
-        { id: user.id, email: user.email, name: fallbackName },
+        { id: user.id, name: fallbackName },
         { onConflict: 'id' }
       )
       profile = { name: fallbackName, role: 'player', avatar_url: null }
@@ -61,7 +61,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex flex-col min-h-dvh bg-bg">
       <Header
-        name={profile?.name ?? (user ? user.email?.split('@')[0] : 'Guest')}
+        name={profile?.name ?? (user ? ((user.user_metadata?.name as string | undefined) ?? 'Player') : 'Guest')}
         role={displayRole}
         avatarUrl={profile?.avatar_url}
       />

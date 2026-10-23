@@ -84,7 +84,7 @@ export function SettingsForm({ prefs }: { prefs: Prefs }) {
           <p className="text-xs font-extrabold uppercase tracking-widest text-body">Account</p>
         </div>
         <div className="px-4 py-3 flex items-center justify-between gap-3">
-          <p className="text-xs text-body leading-snug flex-1">Anonymises your profile. Cannot be undone.</p>
+          <p className="text-xs text-body leading-snug flex-1">Your account will be deleted.</p>
           <button
             type="button"
             onClick={() => setShowDelete(true)}
@@ -129,13 +129,12 @@ function ToggleRow({
         role="switch"
         aria-checked={on}
         onClick={() => setOn(o => !o)}
-        className="relative shrink-0 focus:outline-none"
+        className="shrink-0 focus:outline-none"
       >
         <input type="checkbox" name={name} checked={on} onChange={() => {}} className="sr-only" />
-        <div className={`w-11 h-6 rounded-full border-2 border-black transition-colors ${on ? 'bg-yellow' : 'bg-muted'}`} />
-        <div
-          className={`absolute top-[2px] left-[2px] w-[18px] h-[18px] rounded-full bg-white border-2 border-black transition-transform ${on ? 'translate-x-5' : 'translate-x-0'}`}
-        />
+        <div className={`w-11 h-6 rounded-full border-2 border-black flex items-center px-0.5 transition-colors ${on ? 'bg-yellow' : 'bg-muted'}`}>
+          <div className={`w-4 h-4 rounded-full bg-white border-2 border-black transition-transform ${on ? 'translate-x-5' : 'translate-x-0'}`} />
+        </div>
       </button>
     </div>
   )
