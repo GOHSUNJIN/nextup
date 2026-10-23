@@ -63,7 +63,7 @@ export function EditProfileForm({ name, phone, gender, avatarUrl, userId }: Prop
         <h1 className="font-heading font-extrabold italic text-3xl uppercase">EDIT PROFILE</h1>
       </div>
 
-      {/* Avatar hero */}
+      {/* Avatar */}
       <div className="relative bg-black rounded-[18px] overflow-hidden px-5 py-5">
         <div className="absolute -top-8 -right-8 w-32 h-32 bg-yellow rounded-full opacity-15" />
         <div className="absolute -top-2 -right-2 w-16 h-16 bg-yellow rounded-full opacity-20" />
@@ -72,22 +72,25 @@ export function EditProfileForm({ name, phone, gender, avatarUrl, userId }: Prop
             type="button"
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
-            className="relative w-20 h-20 rounded-full border-[3px] border-yellow overflow-hidden bg-[#222] flex items-center justify-center"
+            className="relative w-20 h-20"
           >
-            {currentAvatar ? (
-              <Image src={currentAvatar} alt="Avatar" fill className="object-cover" unoptimized />
-            ) : (
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BDB9AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
-              </svg>
-            )}
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
+            <div className="w-20 h-20 rounded-full border-[3px] border-yellow overflow-hidden bg-[#222] flex items-center justify-center">
+              {currentAvatar ? (
+                <Image src={currentAvatar} alt="Avatar" fill className="object-cover" unoptimized />
+              ) : (
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#BDB9AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+                </svg>
+              )}
+            </div>
+            {/* Camera badge */}
+            <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-yellow border-2 border-black flex items-center justify-center">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
               </svg>
             </div>
           </button>
-          <p className="text-[#BDB9AF] text-xs">{uploading ? 'Uploading…' : 'Tap to change photo'}</p>
+          <p className="text-[#BDB9AF] text-xs">{uploading ? 'Uploading...' : 'Tap to change photo'}</p>
           <input ref={fileRef} type="file" accept="image/*" className="sr-only" onChange={handleAvatarChange} />
         </div>
       </div>
@@ -101,17 +104,18 @@ export function EditProfileForm({ name, phone, gender, avatarUrl, userId }: Prop
           </div>
           <div className="p-4 flex flex-col gap-3">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-extrabold uppercase tracking-widest text-body" htmlFor="name">Full name</label>
+              <label className="text-sm font-semibold" htmlFor="name">Full name</label>
               <input
                 id="name" name="name" type="text" required autoComplete="off"
                 defaultValue={name}
+                placeholder="Your name"
                 className="h-11 rounded-[10px] border-2 border-black bg-white px-3 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-extrabold uppercase tracking-widest text-body" htmlFor="phone">
-                Phone <span className="normal-case font-normal tracking-normal text-body">(optional)</span>
+              <label className="text-sm font-semibold" htmlFor="phone">
+                Phone <span className="font-normal text-body">(optional)</span>
               </label>
               <input
                 id="phone" name="phone" type="tel" autoComplete="off"
@@ -122,7 +126,7 @@ export function EditProfileForm({ name, phone, gender, avatarUrl, userId }: Prop
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-extrabold uppercase tracking-widest text-body">Gender</label>
+              <label className="text-sm font-semibold">Gender</label>
               <div className="flex gap-2">
                 {(['male', 'female'] as const).map(g => (
                   <label key={g} className="flex-1">
@@ -143,7 +147,7 @@ export function EditProfileForm({ name, phone, gender, avatarUrl, userId }: Prop
 
         <div className="mt-3">
           <BigActionButton type="submit" disabled={pending || uploading} size="lg">
-            {pending ? 'Saving…' : 'SAVE CHANGES'}
+            {pending ? 'Saving...' : 'SAVE CHANGES'}
           </BigActionButton>
         </div>
       </form>

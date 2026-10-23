@@ -57,7 +57,7 @@ export async function handleNoShows(sessionId: string) {
   if (newly?.length) {
     await sendPushToPlayers(
       newly.map((p: { player_id: string }) => p.player_id),
-      { title: "You're up!", body: 'Head to your court — 3 minutes to check in.', url: '/queue' }
+      { title: "You're up!", body: 'Head to your court. 3 minutes to check in.', url: '/queue' }
     )
   }
 

@@ -11,7 +11,7 @@ const FAQS = [
   },
   {
     q: 'Can I choose my partner?',
-    a: 'Yes — send a pair request to another player in the queue. If they accept, you\'ll share a court.',
+    a: 'Yes. Send a pair request to another player in the queue. If they accept, you\'ll share a court.',
   },
   {
     q: 'What if I miss my turn?',

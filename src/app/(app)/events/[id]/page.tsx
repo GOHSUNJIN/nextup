@@ -71,12 +71,12 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 function formatDate(date: string | null) {
-  if (!date) return '—'
+  if (!date) return ''
   return new Date(date).toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 function formatTime(time: string | null) {
-  if (!time) return '—'
+  if (!time) return ''
   const [h, m] = time.split(':')
   const hour = parseInt(h)
   const ampm = hour >= 12 ? 'pm' : 'am'

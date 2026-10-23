@@ -59,7 +59,7 @@ export default async function EventsPage() {
               <h1 className="font-heading font-extrabold italic text-5xl uppercase leading-none text-white">
                 Nothing<br />scheduled
               </h1>
-              <p className="text-[#BDB9AF] text-sm mt-3">Check back soon — sessions are added regularly.</p>
+              <p className="text-[#BDB9AF] text-sm mt-3">Check back soon. Sessions are added regularly.</p>
             </div>
           </div>
 
@@ -97,7 +97,7 @@ export default async function EventsPage() {
           <div className="flex flex-col gap-2">
             <p className="text-xs font-extrabold uppercase tracking-widest text-body px-1">What to expect</p>
             {[
-              { icon: '🏓', title: 'Open play format', body: 'Sessions run as open play — anyone can join regardless of level.' },
+              { icon: '🏓', title: 'Open play format', body: 'Sessions run as open play. Anyone can join regardless of level.' },
               { icon: '⚡', title: 'Court rotation queue', body: 'Join the queue in-app and get assigned to a court when it\'s your turn.' },
               { icon: '👥', title: 'Mixed matchups', body: 'You\'ll be matched with 3 others to form balanced doubles games.' },
             ].map(item => (

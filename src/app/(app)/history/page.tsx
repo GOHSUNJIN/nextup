@@ -82,7 +82,7 @@ export default async function HistoryPage() {
         <StatCard cells={[
           { value: matches.length, label: 'Games' },
           { value: wins, label: 'Wins' },
-          { value: winRate !== null ? `${winRate}%` : '—', label: 'Win rate' },
+          { value: winRate !== null ? `${winRate}%` : '-', label: 'Win rate' },
         ]} />
       )}
 
@@ -110,9 +110,9 @@ export default async function HistoryPage() {
             </div>
             <div className="grid grid-cols-3 divide-x-2 divide-black">
               {[
-                { label: 'Games', value: '—' },
-                { label: 'Wins', value: '—' },
-                { label: 'Win rate', value: '—' },
+                { label: 'Games', value: '-' },
+                { label: 'Wins', value: '-' },
+                { label: 'Win rate', value: '-' },
               ].map(s => (
                 <div key={s.label} className="flex flex-col items-center py-4 gap-1">
                   <span className="font-heading font-extrabold italic text-3xl text-body">{s.value}</span>
