@@ -160,17 +160,14 @@ export function SplashScreen() {
           </svg>
         </div>
 
-        <span
-          style={{
-            fontFamily: "'Luckiest Guy', sans-serif",
-            fontSize: '20px',
-            letterSpacing: '3px',
-            color: '#111111',
-            textShadow: '1px 1px 0 rgba(0,0,0,0.15)',
-          }}
-        >
-          PICKLEPEDIA
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/picklepedia-logo.png"
+          alt="Picklepedia"
+          width={104}
+          height={95}
+          style={{ filter: 'drop-shadow(2px 2px 0 #111111)', display: 'block' }}
+        />
       </div>
     </div>
   )
