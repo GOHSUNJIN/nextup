@@ -5,22 +5,17 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { PlayerAvatar } from '@/components/ui/PlayerAvatar'
 import { signOut } from '@/app/actions/auth'
-import { DebugLog } from './DebugLog'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login?next=/profile')
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from('profiles')
     .select('name, email, phone, gender, role, skill_tier, avatar_url, dupr_rating')
     .eq('id', user.id)
     .single()
-
-  console.log('[profile page] user.id:', user.id)
-  console.log('[profile page] profile:', JSON.stringify(profile))
-  console.log('[profile page] error:', profileError?.message, profileError?.code)
 
   const name = profile?.name ?? 'Player'
   const role = (profile?.role ?? 'player') as 'player' | 'co_admin' | 'admin'
@@ -30,7 +25,6 @@ export default async function ProfilePage() {
 
   return (
     <div className="flex flex-col gap-4 pb-4">
-      <DebugLog data={{ userId: user.id, profile, profileError: profileError?.message ?? null }} />
       <h1 className="font-heading font-extrabold italic text-3xl uppercase">PROFILE</h1>
 
       {/* Hero card */}
@@ -48,9 +42,6 @@ export default async function ProfilePage() {
             >
               {roleLabel.toUpperCase()}
             </span>
-            {profile?.phone && (
-              <p className="text-[#BDB9AF] text-xs mt-1.5 truncate">{profile.phone}</p>
-            )}
           </div>
         </div>
       </div>
