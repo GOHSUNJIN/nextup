@@ -47,7 +47,8 @@
       "PowerShell(Get-ChildItem *)",
       "Bash(powershell -Command \"Expand-Archive -Path 'c:\\\\Users\\\\Lenovo\\\\Desktop\\\\NextUp\\\\Splash B · Burst + ball-html.zip' -DestinationPath 'c:\\\\Users\\\\Lenovo\\\\Desktop\\\\NextUp\\\\design\\\\splash-temp' -Force\")",
       "Bash(node -e \"const fs=require\\('fs'\\); const d=fs.readFileSync\\('public/picklepedia-logo.png'\\); console.log\\('data:image/png;base64,' + d.toString\\('base64'\\)\\);\")",
-      "Bash(npx vitest *)"
+      "Bash(npx vitest *)",
+      "WebFetch(domain:www.picklepedia.co)"
     ]
   }
 }
