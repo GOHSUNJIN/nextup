@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
 
 export function SplashScreen() {
   const [phase, setPhase] = useState<'hidden' | 'visible' | 'fading'>('hidden')
@@ -36,7 +35,7 @@ export function SplashScreen() {
 
   return (
     <div
-      className={`absolute inset-0 z-50 overflow-hidden transition-opacity duration-500 ${phase === 'fading' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      className={`fixed inset-0 z-[9999] overflow-hidden transition-opacity duration-500 ${phase === 'fading' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
       style={{ background: '#E3342F' }}
     >
       {/* Center content */}
@@ -162,13 +161,13 @@ export function SplashScreen() {
         </div>
 
         {/* Picklepedia logo */}
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src="/picklepedia-logo.png"
           alt="Picklepedia"
           width={104}
           height={95}
-          style={{ filter: 'drop-shadow(2px 2px 0 #111111)' }}
-          priority
+          style={{ filter: 'drop-shadow(2px 2px 0 #111111)', display: 'block' }}
         />
       </div>
     </div>
