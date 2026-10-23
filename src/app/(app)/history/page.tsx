@@ -15,7 +15,7 @@ export default async function HistoryPage() {
         <h1 className="font-heading font-extrabold italic text-3xl uppercase">HISTORY</h1>
         <div className="bg-white border-2 border-black rounded-[18px] p-6 flex flex-col items-center gap-3 text-center">
           <p className="font-bold text-sm">Sign in to see your match history</p>
-          <Link href="/login?next=/history" className="h-10 px-5 border-2 border-black rounded-[14px] bg-black text-white text-sm font-bold flex items-center">
+          <Link href="/login?next=/history" className="h-10 px-5 border-2 border-black rounded-[14px] bg-brand text-white text-sm font-bold flex items-center">
             Sign in
           </Link>
         </div>
@@ -99,7 +99,7 @@ export default async function HistoryPage() {
             </div>
           </div>
           <Link href="/courts">
-            <div className="w-full h-[52px] border-2 border-black bg-black text-white rounded-[14px] font-heading font-extrabold italic text-xl uppercase flex items-center justify-center shadow-[4px_4px_0_#444]">
+            <div className="w-full h-[52px] border-2 border-black bg-brand text-white rounded-[14px] font-heading font-extrabold italic text-xl uppercase flex items-center justify-center shadow-[4px_4px_0_#111]">
               FIND A SESSION
             </div>
           </Link>

@@ -60,7 +60,7 @@ export default async function CheckinPage({
           </div>
           <Link
             href="/queue"
-            className="h-14 w-full max-w-[280px] rounded-[16px] border-2 border-black bg-black text-white font-heading font-extrabold italic text-xl uppercase flex items-center justify-center shadow-[4px_4px_0_#111]"
+            className="h-14 w-full max-w-[280px] rounded-[16px] border-2 border-black bg-brand text-white font-heading font-extrabold italic text-xl uppercase flex items-center justify-center shadow-[4px_4px_0_#111]"
           >
             JOIN QUEUE
           </Link>

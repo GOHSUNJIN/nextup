@@ -60,7 +60,7 @@ export default function VerifyEmailPage() {
               type="button"
               disabled={pending}
               onClick={handleResend}
-              className="w-full h-[56px] border-2 border-black bg-black text-white rounded-[16px] font-heading font-extrabold italic text-[22px] uppercase shadow-[4px_4px_0_#333] disabled:opacity-50 transition-opacity"
+              className="w-full h-[56px] border-2 border-black bg-brand text-white rounded-[16px] font-heading font-extrabold italic text-[22px] uppercase shadow-[4px_4px_0_#111] disabled:opacity-50 transition-opacity"
             >
               {pending ? 'Sending…' : 'RESEND EMAIL'}
             </button>

@@ -15,7 +15,7 @@ export function NoSession() {
         </div>
       </div>
       <Link href="/events">
-        <div className="w-full h-[52px] border-2 border-black bg-black text-white rounded-[14px] font-heading font-extrabold italic text-xl uppercase flex items-center justify-center shadow-[4px_4px_0_#444]">
+        <div className="w-full h-[52px] border-2 border-black bg-brand text-white rounded-[14px] font-heading font-extrabold italic text-xl uppercase flex items-center justify-center shadow-[4px_4px_0_#111]">
           VIEW EVENTS
         </div>
       </Link>
