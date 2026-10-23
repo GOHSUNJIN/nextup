@@ -7,7 +7,6 @@ const AUTH_ROUTES = ['/login', '/signup', '/verify-email']
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
 
-  // Redirect root to courts
   if (path === '/') {
     return NextResponse.redirect(new URL('/courts', request.url))
   }
@@ -38,13 +37,24 @@ export async function middleware(request: NextRequest) {
     // Supabase unreachable — treat as unauthenticated, allow public routes through
   }
 
-  // Authenticated users don't need auth pages
+  const emailVerified = user?.email_confirmed_at != null
+
+  // Unverified users must stay on verify-email until they confirm
+  if (user && !emailVerified) {
+    if (!path.startsWith('/verify-email')) {
+      return NextResponse.redirect(new URL('/verify-email', request.url))
+    }
+    return supabaseResponse
+  }
+
+  // Verified authenticated users don't need auth pages
   if (user && AUTH_ROUTES.some(r => path.startsWith(r))) {
     return NextResponse.redirect(new URL('/courts', request.url))
   }
 
   // Protected routes require auth
-  const isProtected = !PUBLIC_ROUTES.some(r => path.startsWith(r)) &&
+  const isProtected =
+    !PUBLIC_ROUTES.some(r => path.startsWith(r)) &&
     !AUTH_ROUTES.some(r => path.startsWith(r))
 
   if (!user && isProtected) {

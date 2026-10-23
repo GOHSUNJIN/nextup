@@ -66,8 +66,8 @@ export default function VerifyEmailPage() {
         </>
       )}
 
-      <Link href="/courts" className="text-sm text-body underline">
-        Continue to app
+      <Link href="/login" className="text-sm text-body underline">
+        Back to login
       </Link>
     </div>
   )
