@@ -92,6 +92,22 @@ export async function resendVerification() {
   return { success: true }
 }
 
+export async function updateProfile(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not signed in' }
+
+  const name = (formData.get('name') as string).trim()
+  const phone = (formData.get('phone') as string).trim() || null
+
+  if (!name) return { error: 'Name is required.' }
+
+  const { error } = await supabase.from('profiles').update({ name, phone }).eq('id', user.id)
+  if (error) return { error: error.message }
+
+  redirect('/profile')
+}
+
 export async function deleteAccount() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

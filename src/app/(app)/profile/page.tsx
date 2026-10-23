@@ -44,8 +44,9 @@ export default async function ProfilePage() {
         {profile?.dupr_rating && <Row label="DUPR rating" value={String(profile.dupr_rating)} />}
       </div>
 
-      {/* Settings / FAQ links */}
+      {/* Account links */}
       <div className="bg-white border-2 border-black rounded-[18px] divide-y-2 divide-black overflow-hidden">
+        <LinkRow href="/profile/edit" label="Edit profile" />
         <LinkRow href="/profile/settings" label="Settings" />
         <LinkRow href="/profile/faq" label="Help & FAQ" />
       </div>

@@ -1,5 +1,6 @@
 'use client'
 import { useState, useTransition } from 'react'
+import Link from 'next/link'
 import { resendVerification } from '@/app/actions/auth'
 import { BigActionButton } from '@/components/ui/BigActionButton'
 
@@ -64,6 +65,10 @@ export default function VerifyEmailPage() {
           </BigActionButton>
         </>
       )}
+
+      <Link href="/courts" className="text-sm text-body underline">
+        Continue to app
+      </Link>
     </div>
   )
 }
