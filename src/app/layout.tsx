@@ -59,9 +59,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${inter.variable} ${barlowCondensed.variable} ${luckiestGuy.variable}`}
     >
       <body className="bg-zinc-800">
+        <SplashScreen />
         <div className="flex justify-center sm:py-6 min-h-screen bg-zinc-800">
           <div className="relative w-full max-w-[430px] overflow-hidden bg-bg min-h-screen sm:rounded-[36px]">
-            <SplashScreen />
             {children}
           </div>
         </div>
