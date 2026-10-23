@@ -27,24 +27,43 @@ export default async function CourtsPage() {
       .maybeSingle()
 
     return (
-      <div className="flex flex-col items-center justify-center flex-1 gap-4 text-center py-12">
-        <div className="w-16 h-16 rounded-2xl bg-muted border-2 border-black flex items-center justify-center">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4A4740" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" />
-            <rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" />
-          </svg>
+      <div className="flex flex-col gap-4 py-2">
+        {/* Dark hero */}
+        <div className="relative bg-black rounded-[18px] border-2 border-black overflow-hidden px-5 pt-5 pb-6">
+          {/* Yellow burst accent */}
+          <div className="absolute -top-6 -right-6 w-24 h-24 bg-yellow rounded-full opacity-90" />
+          <div className="absolute -top-3 -right-3 w-14 h-14 bg-yellow rounded-full" />
+
+          <div className="relative">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-[#BDB9AF] mb-2">Courts</p>
+            <h1 className="font-heading font-extrabold italic text-5xl uppercase leading-none text-white">
+              No play<br />today
+            </h1>
+            <p className="text-[#BDB9AF] text-sm mt-3">No live session right now.</p>
+          </div>
         </div>
-        <div>
-          <h1 className="font-heading font-extrabold italic text-3xl uppercase">No play today</h1>
-          {next && (
-            <p className="text-body text-sm mt-1">
-              Next up: <span className="font-bold text-black">{next.name}</span>
-            </p>
-          )}
-        </div>
-        <Link href="/events" className="text-sm font-bold underline underline-offset-2">
-          View all events
-        </Link>
+
+        {/* Next event card */}
+        {next ? (
+          <div className="bg-white border-2 border-black rounded-[18px] p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-yellow border-2 border-black flex items-center justify-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-extrabold uppercase tracking-widest text-body mb-0.5">Next up</p>
+              <p className="font-bold text-sm truncate">{next.name}</p>
+              <p className="text-xs text-body">{formatDate(next.date)} · {formatTime(next.start_time)}</p>
+            </div>
+            <Link href="/events" className="text-xs font-bold underline shrink-0">See all</Link>
+          </div>
+        ) : (
+          <div className="bg-white border-2 border-black rounded-[18px] p-4 text-center">
+            <p className="text-body text-sm">No upcoming events scheduled.</p>
+            <Link href="/events" className="text-sm font-bold underline mt-1 inline-block">View events</Link>
+          </div>
+        )}
       </div>
     )
   }
@@ -151,4 +170,14 @@ export default async function CourtsPage() {
       </div>
     </>
   )
+}
+
+function formatDate(date: string | null) {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric', month: 'short' })
+}
+
+function formatTime(time: string | null) {
+  if (!time) return ''
+  return new Date(time).toLocaleTimeString('en-SG', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase()
 }

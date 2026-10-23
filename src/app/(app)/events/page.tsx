@@ -47,7 +47,24 @@ export default async function EventsPage() {
       </div>
 
       {!sessions?.length && (
-        <p className="text-body text-sm text-center py-8">No events yet.</p>
+        <div className="flex flex-col items-center gap-4 py-10 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-yellow border-2 border-black flex items-center justify-center shadow-[4px_4px_0_#111]">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+          </div>
+          <div>
+            <p className="font-heading font-extrabold italic text-2xl uppercase">No events yet</p>
+            <p className="text-body text-sm mt-1 max-w-[220px] mx-auto">
+              {isAdmin ? 'Create your first event to get started.' : 'Events will appear here once scheduled.'}
+            </p>
+          </div>
+          {isAdmin && (
+            <Link href="/admin/events/new" className="h-11 px-5 border-2 border-black rounded-[14px] bg-black text-white text-sm font-bold flex items-center gap-1.5 shadow-[3px_3px_0_#444]">
+              + Create first event
+            </Link>
+          )}
+        </div>
       )}
 
       {live.length > 0 && (

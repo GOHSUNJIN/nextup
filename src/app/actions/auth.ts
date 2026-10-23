@@ -28,15 +28,17 @@ export async function signUp(formData: FormData) {
 
   if (error) return { error: error.message }
 
-  // Update profile with additional fields
+  // Upsert profile — trigger may already have created the row, but gender/phone/pdpa aren't set by it
   const { data: { user } } = await supabase.auth.getUser()
   if (user) {
-    await supabase.from('profiles').update({
+    await supabase.from('profiles').upsert({
+      id: user.id,
       name,
+      email: user.email,
       phone: phone || null,
       gender: gender as 'male' | 'female',
       pdpa_consent_at: new Date().toISOString(),
-    }).eq('id', user.id)
+    }, { onConflict: 'id' })
   }
 
   redirect('/verify-email')
