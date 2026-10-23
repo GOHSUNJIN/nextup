@@ -11,11 +11,15 @@ export default async function ProfilePage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login?next=/profile')
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('name, email, phone, gender, role, skill_tier, avatar_url, dupr_rating')
     .eq('id', user.id)
     .single()
+
+  console.log('[profile page] user.id:', user.id)
+  console.log('[profile page] profile:', JSON.stringify(profile))
+  console.log('[profile page] error:', profileError?.message, profileError?.code)
 
   const name = profile?.name ?? 'Player'
   const role = (profile?.role ?? 'player') as 'player' | 'co_admin' | 'admin'
