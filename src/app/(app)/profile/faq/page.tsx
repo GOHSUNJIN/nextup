@@ -61,7 +61,7 @@ export default function FaqPage() {
 
       <p className="text-center text-xs text-body">
         We comply with Singapore&apos;s PDPA. Your data is never shared.{' '}
-        <Link href="/profile/faq#privacy" className="font-bold underline">Privacy policy</Link>
+        <Link href="/privacy" className="font-bold underline">Privacy policy</Link>
       </p>
     </div>
   )

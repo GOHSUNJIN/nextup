@@ -84,7 +84,7 @@ export default function SignUpPage() {
             <input name="pdpa" type="checkbox" required className="mt-0.5 w-4 h-4 rounded border-2 border-black accent-black shrink-0" />
             <span className="text-[11px] text-body leading-snug">
               I agree to the{' '}
-              <Link href="/profile/faq#privacy" className="underline font-semibold text-black">Privacy Policy</Link>
+              <Link href="/privacy" className="underline font-semibold text-black">Privacy Policy</Link>
               . Phone &amp; gender collected for pickleball sessions only. (PDPA, Singapore)
             </span>
           </label>
