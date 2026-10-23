@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { BackButton } from './BackButton'
 
 export const metadata = { title: 'Privacy Policy — NextUp' }
 
@@ -6,11 +6,7 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-bg px-5 py-8 flex flex-col gap-5 max-w-[430px] mx-auto">
       <div className="flex items-center gap-3">
-        <Link href="/" className="w-9 h-9 rounded-full border-2 border-black flex items-center justify-center bg-white shrink-0">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m15 18-6-6 6-6" />
-          </svg>
-        </Link>
+        <BackButton />
         <h1 className="font-heading font-extrabold italic text-3xl uppercase">Privacy Policy</h1>
       </div>
 
