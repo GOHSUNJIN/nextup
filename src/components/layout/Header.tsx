@@ -43,15 +43,24 @@ export function Header({ name = 'Guest', role = 'guest', avatarUrl }: Props) {
       </div>
 
       {/* User info */}
-      <Link href="/profile" className="flex items-center gap-2 min-h-[44px]">
-        <div className="flex flex-col items-end gap-0.5">
-          <span className="text-[13px] font-extrabold leading-tight whitespace-nowrap">{name}</span>
-          <span className={`text-[11px] font-semibold ${ROLE_COLOR[role]}`}>
-            {ROLE_LABEL[role]}
-          </span>
-        </div>
-        <PlayerAvatar name={name} role={role} avatarUrl={avatarUrl} size={38} />
-      </Link>
+      {role === 'guest' ? (
+        <Link
+          href="/login"
+          className="h-9 px-4 border-2 border-black rounded-full bg-black text-white text-xs font-extrabold uppercase tracking-wide flex items-center shadow-[2px_2px_0_#D2281F]"
+        >
+          Sign in
+        </Link>
+      ) : (
+        <Link href="/profile" className="flex items-center gap-2 min-h-[44px]">
+          <div className="flex flex-col items-end gap-0.5">
+            <span className="text-[13px] font-extrabold leading-tight whitespace-nowrap">{name}</span>
+            <span className={`text-[11px] font-semibold ${ROLE_COLOR[role]}`}>
+              {ROLE_LABEL[role]}
+            </span>
+          </div>
+          <PlayerAvatar name={name} role={role} avatarUrl={avatarUrl} size={38} />
+        </Link>
+      )}
     </header>
   )
 }
