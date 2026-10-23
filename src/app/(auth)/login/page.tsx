@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { signIn, signInWithMagicLink } from '@/app/actions/auth'
 import { BigActionButton } from '@/components/ui/BigActionButton'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 
 function LoginContent() {
   const [error, setError] = useState<string | null>(null)
@@ -82,10 +83,11 @@ function LoginContent() {
 
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-semibold" htmlFor="password">Password</label>
-            <input
-              id="password" name="password" type="password" required autoComplete="current-password"
+            <PasswordInput
+              id="password"
+              name="password"
+              autoComplete="current-password"
               placeholder="Your password"
-              className="h-12 rounded-[12px] border-2 border-black bg-white px-3.5 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
             />
           </div>
 

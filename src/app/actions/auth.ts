@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 
@@ -104,8 +105,16 @@ export async function updateProfile(formData: FormData) {
 
   if (!name) return { error: 'Name is required.' }
 
-  const { error } = await supabase.from('profiles').update({ name, phone }).eq('id', user.id)
-  if (error) return { error: error.message }
+  // Upsert so it works even if the profile row was never created
+  const admin = createAdminClient()
+  const { error } = await admin.from('profiles').upsert(
+    { id: user.id, name, phone },
+    { onConflict: 'id' }
+  )
+  if (error) {
+    if (error.code === '23505') return { error: 'That phone number is already linked to another account.' }
+    return { error: error.message }
+  }
 
   redirect('/profile')
 }

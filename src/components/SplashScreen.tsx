@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 export function SplashScreen() {
   const [phase, setPhase] = useState<'hidden' | 'visible' | 'fading'>('hidden')
   const [progress, setProgress] = useState(0)
+  const [logoFailed, setLogoFailed] = useState(false)
   const rafRef = useRef<number | null>(null)
 
   useEffect(() => {
@@ -161,14 +162,29 @@ export function SplashScreen() {
         </div>
 
         {/* Picklepedia logo */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/picklepedia-logo.png"
-          alt="Picklepedia"
-          width={104}
-          height={95}
-          style={{ filter: 'drop-shadow(2px 2px 0 #111111)', display: 'block' }}
-        />
+        {logoFailed ? (
+          <span
+            style={{
+              fontFamily: "'Luckiest Guy', sans-serif",
+              fontSize: '20px',
+              letterSpacing: '3px',
+              color: '#111111',
+              textShadow: '1px 1px 0 rgba(0,0,0,0.15)',
+            }}
+          >
+            PICKLEPEDIA
+          </span>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src="/picklepedia-logo.png"
+            alt="Picklepedia"
+            width={104}
+            height={95}
+            onError={() => setLogoFailed(true)}
+            style={{ filter: 'drop-shadow(2px 2px 0 #111111)', display: 'block' }}
+          />
+        )}
       </div>
     </div>
   )

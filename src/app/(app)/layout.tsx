@@ -1,34 +1,41 @@
 export const dynamic = 'force-dynamic'
 
-
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { Header } from '@/components/layout/Header'
 import { BottomNav } from '@/components/layout/BottomNav'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
+  const admin = createAdminClient()
+
   const { data: { user } } = await supabase.auth.getUser()
 
-  let profile = null
+  let profile: { name: string; role: string; avatar_url: string | null } | null = null
   let queuePosition: number | null = null
 
   if (user) {
-    const { data } = await supabase
-      .from('profiles')
-      .select('name, role, avatar_url')
-      .eq('id', user.id)
-      .single()
-    profile = data
+    // Admin client bypasses RLS — profile always loads even if SELECT policy is missing
+    const [profileResult, sessionResult] = await Promise.all([
+      admin.from('profiles').select('name, role, avatar_url').eq('id', user.id).single(),
+      admin.from('sessions').select('id').eq('status', 'live').maybeSingle(),
+    ])
 
-    // Get queue position in the live session if waiting
-    const { data: session } = await supabase
-      .from('sessions')
-      .select('id')
-      .eq('status', 'live')
-      .maybeSingle()
+    profile = profileResult.data
 
+    // If profile row never got created, seed a minimal one
+    if (!profile) {
+      const fallbackName = user.email?.split('@')[0] ?? 'Player'
+      await admin.from('profiles').upsert(
+        { id: user.id, email: user.email, name: fallbackName },
+        { onConflict: 'id' }
+      )
+      profile = { name: fallbackName, role: 'player', avatar_url: null }
+    }
+
+    const session = sessionResult.data
     if (session) {
-      const { data: entry } = await supabase
+      const { data: entry } = await admin
         .from('queue_entries')
         .select('queue_position')
         .eq('session_id', session.id)
@@ -37,8 +44,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         .maybeSingle()
 
       if (entry) {
-        // Count entries ahead of this one to get display position
-        const { count } = await supabase
+        const { count } = await admin
           .from('queue_entries')
           .select('id', { count: 'exact', head: true })
           .eq('session_id', session.id)
@@ -49,21 +55,22 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     }
   }
 
-  const role = (profile?.role ?? 'guest') as 'player' | 'co_admin' | 'admin' | 'guest'
+  const role = (profile?.role ?? 'player') as 'player' | 'co_admin' | 'admin' | 'guest'
+  const displayRole: 'player' | 'co_admin' | 'admin' | 'guest' = user ? role : 'guest'
 
   return (
     <div className="flex flex-col min-h-dvh bg-bg">
       <Header
         name={profile?.name ?? (user ? user.email?.split('@')[0] : 'Guest')}
-        role={user ? role : 'guest'}
+        role={displayRole}
         avatarUrl={profile?.avatar_url}
       />
       <main className="flex-1 overflow-y-auto px-4 pt-2.5 pb-6 flex flex-col gap-3">
         {children}
       </main>
       <BottomNav
-        isAdmin={role === 'admin'}
-        isCoadmin={role === 'co_admin'}
+        isAdmin={displayRole === 'admin'}
+        isCoadmin={displayRole === 'co_admin'}
         queuePosition={queuePosition}
       />
     </div>

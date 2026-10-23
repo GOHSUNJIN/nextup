@@ -32,7 +32,7 @@ export async function createEvent(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Not signed in' }
 
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  const { data: profile } = await createAdminClient().from('profiles').select('role').eq('id', user.id).single()
   if (!profile || !['admin', 'co_admin'].includes(profile.role)) return { error: 'Not authorized' }
 
   const name = formData.get('name') as string
@@ -136,8 +136,8 @@ export async function addWalkIn(sessionId: string, name: string, gender: string)
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Not signed in' }
 
-  // Create walk-in profile
-  const { data: walkIn, error } = await supabase
+  // Create walk-in profile (bypass RLS — admin only)
+  const { data: walkIn, error } = await createAdminClient()
     .from('profiles')
     .insert({
       name,

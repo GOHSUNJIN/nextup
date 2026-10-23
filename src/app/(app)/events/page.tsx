@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { StatusPill } from '@/components/ui/StatusPill'
 import Link from 'next/link'
 import { RemindMeButton } from './RemindMeButton'
@@ -13,7 +14,8 @@ export default async function EventsPage() {
   let reminders: string[] = []
 
   if (user) {
-    const { data: p } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    const admin = createAdminClient()
+    const { data: p } = await admin.from('profiles').select('role').eq('id', user.id).single()
     profile = p
 
     const { data: r } = await supabase

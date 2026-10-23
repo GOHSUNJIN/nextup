@@ -3,6 +3,7 @@ import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { signUp } from '@/app/actions/auth'
 import { BigActionButton } from '@/components/ui/BigActionButton'
+import { PasswordInput } from '@/components/ui/PasswordInput'
 
 export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null)
@@ -68,11 +69,12 @@ export default function SignUpPage() {
         {/* Password */}
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-semibold" htmlFor="password">Password</label>
-          <input
-            id="password" name="password" type="password" required autoComplete="new-password"
+          <PasswordInput
+            id="password"
+            name="password"
+            autoComplete="new-password"
             minLength={8}
             placeholder="Min. 8 characters"
-            className="h-12 rounded-[12px] border-2 border-black bg-white px-3.5 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
           />
         </div>
 
