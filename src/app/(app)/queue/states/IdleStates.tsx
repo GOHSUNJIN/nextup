@@ -19,24 +19,26 @@ export function NoSession() {
           VIEW EVENTS
         </div>
       </Link>
-      {/* Queue explainer */}
-      <div className="flex flex-col gap-2">
-        <p className="text-xs font-extrabold uppercase tracking-widest text-body px-1">How the queue works</p>
-        {[
-          { n: '1', title: 'Check in at the venue', body: 'Enter the 4-digit code on the admin screen when you arrive.', color: 'bg-yellow', textColor: 'text-black' },
-          { n: '2', title: 'Join the queue', body: 'Tap join below once checked in. You\'ll get a position number.', color: 'bg-brand', textColor: 'text-white' },
-          { n: '3', title: 'Play when it\'s your turn', body: 'Get notified and assigned to a court with 3 other players.', color: 'bg-black', textColor: 'text-white' },
-        ].map(step => (
-          <div key={step.n} className="bg-white border-2 border-black rounded-[16px] p-3 flex gap-3 items-start">
-            <div className={`w-8 h-8 rounded-full ${step.color} border-2 border-black flex items-center justify-center shrink-0`}>
-              <span className={`font-heading font-extrabold text-sm ${step.textColor}`}>{step.n}</span>
+      {/* What you get when a session is live */}
+      <div className="bg-white border-2 border-black rounded-[18px] overflow-hidden">
+        <div className="px-4 py-2 border-b-2 border-black bg-muted">
+          <p className="text-xs font-extrabold uppercase tracking-widest text-body">When a session is live</p>
+        </div>
+        <div className="divide-y-2 divide-black">
+          {[
+            { icon: '🔢', title: 'Your position number', body: 'See exactly where you are in the queue in real time.' },
+            { icon: '🔔', title: 'Push notifications', body: 'Get pinged when you\'re 2nd in line and when your court is ready.' },
+            { icon: '🤝', title: 'Play solo or with a partner', body: 'Queue alone or send a pair request to someone already in the queue.' },
+          ].map(item => (
+            <div key={item.title} className="flex gap-3 items-start px-4 py-3">
+              <span className="text-xl shrink-0 mt-0.5">{item.icon}</span>
+              <div>
+                <p className="font-bold text-sm">{item.title}</p>
+                <p className="text-xs text-body mt-0.5">{item.body}</p>
+              </div>
             </div>
-            <div>
-              <p className="font-bold text-sm">{step.title}</p>
-              <p className="text-xs text-body mt-0.5">{step.body}</p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   )
