@@ -1,4 +1,5 @@
-export const instant = false
+export const dynamic = 'force-dynamic'
+
 
 import { createClient } from '@/lib/supabase/server'
 import { CourtCard } from '@/components/ui/CourtCard'
