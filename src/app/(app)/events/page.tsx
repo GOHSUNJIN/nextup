@@ -94,7 +94,7 @@ export default async function EventsPage() {
           )}
 
           {/* What to expect */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 mt-2">
             <p className="text-xs font-extrabold uppercase tracking-widest text-body px-1">What to expect</p>
             {([
               {
