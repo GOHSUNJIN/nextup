@@ -8,7 +8,6 @@ import { headers } from 'next/headers'
 
 export async function signUp(formData: FormData) {
   const supabase = await createClient()
-  const origin = (await headers()).get('origin')
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
@@ -22,10 +21,7 @@ export async function signUp(formData: FormData) {
   const { error } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      emailRedirectTo: `${origin}/auth/callback`,
-      data: { name, phone, gender },
-    },
+    options: { data: { name, phone, gender } },
   })
 
   if (error) return { error: error.message }
@@ -43,7 +39,7 @@ export async function signUp(formData: FormData) {
     }, { onConflict: 'id' })
   }
 
-  redirect('/verify-email')
+  redirect('/courts')
 }
 
 export async function signIn(formData: FormData) {
@@ -78,22 +74,6 @@ export async function signOut() {
   const supabase = await createClient()
   await supabase.auth.signOut()
   redirect('/courts')
-}
-
-export async function resendVerification() {
-  const supabase = await createClient()
-  const origin = (await headers()).get('origin')
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user?.email) return { error: 'Not signed in' }
-
-  const { error } = await supabase.auth.resend({
-    type: 'signup',
-    email: user.email,
-    options: { emailRedirectTo: `${origin}/auth/callback` },
-  })
-
-  if (error) return { error: error.message }
-  return { success: true }
 }
 
 export async function updateProfile(formData: FormData) {

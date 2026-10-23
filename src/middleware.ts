@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 const PUBLIC_ROUTES = ['/courts', '/events']
-const AUTH_ROUTES = ['/login', '/signup', '/verify-email']
+const AUTH_ROUTES = ['/login', '/signup']
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
@@ -37,17 +37,7 @@ export async function middleware(request: NextRequest) {
     // Supabase unreachable — treat as unauthenticated, allow public routes through
   }
 
-  const emailVerified = user?.email_confirmed_at != null
-
-  // Unverified users must stay on verify-email until they confirm
-  if (user && !emailVerified) {
-    if (!path.startsWith('/verify-email')) {
-      return NextResponse.redirect(new URL('/verify-email', request.url))
-    }
-    return supabaseResponse
-  }
-
-  // Verified authenticated users don't need auth pages
+  // Authenticated users don't need auth pages
   if (user && AUTH_ROUTES.some(r => path.startsWith(r))) {
     return NextResponse.redirect(new URL('/courts', request.url))
   }
