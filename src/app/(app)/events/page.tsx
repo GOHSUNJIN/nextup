@@ -96,13 +96,28 @@ export default async function EventsPage() {
           {/* What to expect */}
           <div className="flex flex-col gap-2">
             <p className="text-xs font-extrabold uppercase tracking-widest text-body px-1">What to expect</p>
-            {[
-              { icon: '🏓', title: 'Open play format', body: 'Sessions run as open play. Anyone can join regardless of level.' },
-              { icon: '⚡', title: 'Court rotation queue', body: 'Join the queue in-app and get assigned to a court when it\'s your turn.' },
-              { icon: '👥', title: 'Mixed matchups', body: 'You\'ll be matched with 3 others to form balanced doubles games.' },
-            ].map(item => (
+            {([
+              {
+                color: 'bg-yellow', textColor: 'text-black',
+                icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>,
+                title: 'Open play format',
+                body: 'Sessions run as open play. Anyone can join regardless of level.',
+              },
+              {
+                color: 'bg-brand', textColor: 'text-white',
+                icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>,
+                title: 'Court rotation queue',
+                body: "Join the queue in-app and get assigned to a court when it's your turn.",
+              },
+              {
+                color: 'bg-black', textColor: 'text-white',
+                icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+                title: 'Mixed matchups',
+                body: "You'll be matched with 3 others to form balanced doubles games.",
+              },
+            ] as const).map(item => (
               <div key={item.title} className="bg-white border-2 border-black rounded-[16px] p-4 flex gap-3 items-start">
-                <div className="w-9 h-9 rounded-xl bg-muted border-2 border-black flex items-center justify-center shrink-0 text-lg">
+                <div className={`w-8 h-8 rounded-full ${item.color} border-2 border-black flex items-center justify-center shrink-0 ${item.textColor}`}>
                   {item.icon}
                 </div>
                 <div>

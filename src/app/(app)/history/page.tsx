@@ -103,39 +103,40 @@ export default async function HistoryPage() {
               FIND A SESSION
             </div>
           </Link>
-          {/* Stats preview */}
           <div className="bg-white border-2 border-black rounded-[18px] overflow-hidden">
             <div className="px-4 py-2 border-b-2 border-black bg-muted">
-              <p className="text-xs font-extrabold uppercase tracking-widest text-body">Your stats will show here</p>
+              <p className="text-xs font-extrabold uppercase tracking-widest text-body">After each game</p>
             </div>
-            <div className="grid grid-cols-3 divide-x-2 divide-black">
-              {[
-                { label: 'Games', value: '-' },
-                { label: 'Wins', value: '-' },
-                { label: 'Win rate', value: '-' },
-              ].map(s => (
-                <div key={s.label} className="flex flex-col items-center py-4 gap-1">
-                  <span className="font-heading font-extrabold italic text-3xl text-body">{s.value}</span>
-                  <span className="text-xs text-body">{s.label}</span>
+            <div className="divide-y-2 divide-black">
+              {([
+                {
+                  color: 'bg-yellow', textColor: 'text-black',
+                  icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+                  title: 'Win/loss tracked',
+                  body: 'Every game is logged with the score and opponents.',
+                },
+                {
+                  color: 'bg-brand', textColor: 'text-white',
+                  icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+                  title: 'Win rate calculated',
+                  body: 'See your win percentage grow over time.',
+                },
+                {
+                  color: 'bg-black', textColor: 'text-white',
+                  icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+                  title: 'Players you have faced',
+                  body: 'See who was on each court with you.',
+                },
+              ] as const).map(item => (
+                <div key={item.title} className="flex gap-3 items-center px-4 py-3">
+                  <div className={`w-7 h-7 rounded-full ${item.color} border-2 border-black flex items-center justify-center shrink-0 ${item.textColor}`}>{item.icon}</div>
+                  <div>
+                    <p className="font-semibold text-sm">{item.title}</p>
+                    <p className="text-xs text-body">{item.body}</p>
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <p className="text-xs font-extrabold uppercase tracking-widest text-body px-1">After each game</p>
-            {[
-              { icon: '🏆', title: 'Win/loss tracked', body: 'Every game you play is logged with the score and opponents.' },
-              { icon: '📊', title: 'Win rate calculated', body: 'See your win percentage build as you play more sessions.' },
-              { icon: '👥', title: 'Players you\'ve faced', body: 'Your match history shows who was on each court with you.' },
-            ].map(item => (
-              <div key={item.title} className="bg-white border-2 border-black rounded-[16px] p-3 flex gap-3 items-start">
-                <div className="w-8 h-8 rounded-xl bg-muted border-2 border-black flex items-center justify-center shrink-0 text-base">{item.icon}</div>
-                <div>
-                  <p className="font-bold text-sm">{item.title}</p>
-                  <p className="text-xs text-body mt-0.5">{item.body}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       )}
