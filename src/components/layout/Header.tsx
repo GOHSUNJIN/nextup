@@ -46,7 +46,7 @@ export function Header({ name = 'Guest', role = 'guest', avatarUrl }: Props) {
       {role === 'guest' ? (
         <Link
           href="/login"
-          className="h-9 px-4 border-2 border-black rounded-full bg-black text-white text-xs font-extrabold uppercase tracking-wide flex items-center shadow-[2px_2px_0_#D2281F]"
+          className="h-9 px-4 border-2 border-black rounded-full bg-yellow text-black text-xs font-extrabold uppercase tracking-wide flex items-center shadow-[2px_2px_0_#111]"
         >
           Sign in
         </Link>
