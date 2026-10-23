@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { PlayerAvatar } from '@/components/ui/PlayerAvatar'
 import { signOut } from '@/app/actions/auth'
+import { DebugLog } from './DebugLog'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -29,6 +30,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="flex flex-col gap-4 pb-4">
+      <DebugLog data={{ userId: user.id, profile, profileError: profileError?.message ?? null }} />
       <h1 className="font-heading font-extrabold italic text-3xl uppercase">PROFILE</h1>
 
       {/* Hero card */}
