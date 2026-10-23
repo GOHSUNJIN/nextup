@@ -49,18 +49,18 @@ function LoginContent() {
 
       {/* Form card */}
       <div className="bg-white border-2 border-black rounded-[20px] shadow-[4px_4px_0_#333] p-5 flex flex-col gap-4">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} autoComplete="off" className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-semibold" htmlFor="phone">Phone number</label>
             <input
-              id="phone" name="phone" type="tel" required autoComplete="tel"
+              id="phone" name="phone" type="tel" required autoComplete="off"
               placeholder="+65 9123 4567"
               className="h-12 rounded-[12px] border-2 border-black bg-white px-3.5 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
             />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-semibold" htmlFor="password">Password</label>
-            <PasswordInput id="password" name="password" autoComplete="current-password" placeholder="Your password" />
+            <PasswordInput id="password" name="password" autoComplete="off" placeholder="Your password" />
           </div>
 
           {error && (

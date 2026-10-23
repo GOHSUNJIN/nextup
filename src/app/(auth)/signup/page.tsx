@@ -21,20 +21,20 @@ export default function SignUpPage() {
   return (
     <div className="flex flex-col gap-4">
       {/* Hero */}
-      <div className="relative overflow-hidden rounded-[20px] px-5 pt-5 pb-6">
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-yellow rounded-full opacity-20" />
-        <div className="absolute -top-4 -right-4 w-16 h-16 bg-yellow rounded-full opacity-40" />
+      <div className="relative overflow-hidden rounded-[20px] px-5 pt-5 pb-8">
+        <div className="absolute -top-10 -right-10 w-36 h-36 bg-yellow rounded-full opacity-20" />
+        <div className="absolute -top-4 -right-4 w-20 h-20 bg-yellow rounded-full opacity-40" />
         <div className="relative">
           <Link
             href="/login"
-            className="inline-flex w-9 h-9 rounded-full border-2 border-white/20 items-center justify-center mb-3 text-white"
+            className="inline-flex w-9 h-9 rounded-full border-2 border-white/20 items-center justify-center mb-4 text-white"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="m15 18-6-6 6-6" />
             </svg>
           </Link>
-          <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#BDB9AF] mb-1">NextUp</p>
-          <h1 className="font-heading font-extrabold italic text-4xl uppercase leading-none text-white">
+          <p className="text-xs font-extrabold uppercase tracking-widest text-[#BDB9AF] mb-2">NextUp</p>
+          <h1 className="font-heading font-extrabold italic text-5xl uppercase leading-none text-white">
             Create<br /><span className="text-yellow">Account</span>
           </h1>
         </div>
@@ -42,11 +42,11 @@ export default function SignUpPage() {
 
       {/* Form card */}
       <div className="bg-white border-2 border-black rounded-[20px] shadow-[4px_4px_0_#333] px-4 py-4 flex flex-col gap-3">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} autoComplete="off" className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <label className="text-xs font-semibold text-body" htmlFor="name">Full name</label>
             <input
-              id="name" name="name" type="text" required autoComplete="name"
+              id="name" name="name" type="text" required autoComplete="off"
               placeholder="Your name"
               className="h-11 rounded-[10px] border-2 border-black bg-white px-3 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
             />
@@ -55,7 +55,7 @@ export default function SignUpPage() {
           <div className="flex flex-col gap-1">
             <label className="text-xs font-semibold text-body" htmlFor="phone">Phone number</label>
             <input
-              id="phone" name="phone" type="tel" required autoComplete="tel"
+              id="phone" name="phone" type="tel" required autoComplete="off"
               placeholder="+65 9123 4567"
               className="h-11 rounded-[10px] border-2 border-black bg-white px-3 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
             />
@@ -63,7 +63,7 @@ export default function SignUpPage() {
 
           <div className="flex flex-col gap-1">
             <label className="text-xs font-semibold text-body" htmlFor="password">Password</label>
-            <PasswordInput id="password" name="password" autoComplete="new-password" minLength={8} placeholder="Min. 8 characters" />
+            <PasswordInput id="password" name="password" autoComplete="off" minLength={8} placeholder="Min. 8 characters" />
           </div>
 
           <div className="flex flex-col gap-1">
