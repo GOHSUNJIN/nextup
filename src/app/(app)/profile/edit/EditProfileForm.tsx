@@ -100,7 +100,7 @@ export function EditProfileForm({ name, phone, gender, avatarUrl, userId }: Prop
         <input type="hidden" name="avatar_url" value={currentAvatar ?? ''} />
         <div className="bg-white border-2 border-black rounded-[18px] overflow-hidden">
           <div className="px-4 py-2 border-b-2 border-black bg-muted">
-            <p className="text-xs font-extrabold uppercase tracking-widest text-body">Your info</p>
+            <p className="text-xs font-extrabold uppercase tracking-widest text-body">Your Info</p>
           </div>
           <div className="p-4 flex flex-col gap-3">
             <div className="flex flex-col gap-1.5">
@@ -109,7 +109,7 @@ export function EditProfileForm({ name, phone, gender, avatarUrl, userId }: Prop
                 id="name" name="name" type="text" required autoComplete="off"
                 defaultValue={name}
                 placeholder="Your name"
-                className="h-11 rounded-[10px] border-2 border-black bg-white px-3 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
+                className="h-11 rounded-[10px] border-2 border-black bg-white px-3 text-sm font-medium outline-none focus:border-brand"
               />
             </div>
 
@@ -121,7 +121,7 @@ export function EditProfileForm({ name, phone, gender, avatarUrl, userId }: Prop
                 id="phone" name="phone" type="tel" autoComplete="off"
                 defaultValue={phone}
                 placeholder="+65 9123 4567"
-                className="h-11 rounded-[10px] border-2 border-black bg-white px-3 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
+                className="h-11 rounded-[10px] border-2 border-black bg-white px-3 text-sm font-medium outline-none focus:border-brand"
               />
             </div>
 
