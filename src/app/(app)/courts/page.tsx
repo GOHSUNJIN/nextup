@@ -67,6 +67,26 @@ export default async function CourtsPage() {
             </div>
           </Link>
         )}
+
+        {/* How it works */}
+        <div className="flex flex-col gap-2">
+          <p className="text-xs font-extrabold uppercase tracking-widest text-body px-1">How it works</p>
+          {[
+            { n: '1', title: 'Check in at the venue', body: 'Enter the 4-digit code from the admin screen when you arrive.', color: 'bg-yellow' },
+            { n: '2', title: 'Join the queue', body: 'Head to the Queue tab and tap join. You\'ll get a position number.', color: 'bg-brand' },
+            { n: '3', title: 'Get assigned to a court', body: 'When it\'s your turn, you\'ll be matched with 3 others and assigned a court.', color: 'bg-black' },
+          ].map(step => (
+            <div key={step.n} className="bg-white border-2 border-black rounded-[16px] p-4 flex gap-3 items-start">
+              <div className={`w-8 h-8 rounded-full ${step.color} border-2 border-black flex items-center justify-center shrink-0`}>
+                <span className={`font-heading font-extrabold text-sm ${step.color === 'bg-yellow' ? 'text-black' : 'text-white'}`}>{step.n}</span>
+              </div>
+              <div>
+                <p className="font-bold text-sm">{step.title}</p>
+                <p className="text-xs text-body mt-0.5">{step.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }

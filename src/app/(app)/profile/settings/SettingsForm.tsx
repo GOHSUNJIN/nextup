@@ -40,44 +40,25 @@ export function SettingsForm({ prefs }: { prefs: Prefs }) {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <Section title="Notifications">
-          <ToggleRow
-            name="push_enabled"
-            label="Push notifications"
-            description="Get notified when it's your turn"
-            defaultChecked={prefs.push_enabled}
-          />
-          <ToggleRow
-            name="next_ping_enabled"
-            label="You're next alert"
-            description="Ping when you're 2nd in line"
-            defaultChecked={prefs.next_ping_enabled}
-          />
-          <ToggleRow
-            name="email_enabled"
-            label="Email reminders"
-            description="Session reminder the day before"
-            defaultChecked={prefs.email_enabled}
-          />
-        </Section>
-
-        <Section title="Play preferences">
-          <ToggleRow
-            name="no_strong_courts"
-            label="Avoid strong courts"
-            description="Skip courts for verified strong players"
-            defaultChecked={prefs.no_strong_courts}
-          />
-          {prefs.gender === 'female' && (
-            <ToggleRow
-              name="women_courts_only"
-              label="Women courts only"
-              description="Only join women's courts"
-              defaultChecked={prefs.women_courts_only}
-            />
-          )}
-        </Section>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <div className="bg-white border-2 border-black rounded-[18px] overflow-hidden">
+          <div className="px-4 py-2 border-b-2 border-black bg-muted">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-body">Notifications</p>
+          </div>
+          <div className="divide-y-2 divide-black">
+            <ToggleRow name="push_enabled" label="Push notifications" defaultChecked={prefs.push_enabled} />
+            <ToggleRow name="next_ping_enabled" label="You're next alert" defaultChecked={prefs.next_ping_enabled} />
+          </div>
+          <div className="px-4 py-2 border-t-2 border-black bg-muted">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-body">Play preferences</p>
+          </div>
+          <div className="divide-y-2 divide-black">
+            <ToggleRow name="no_strong_courts" label="Avoid strong courts" defaultChecked={prefs.no_strong_courts} />
+            {prefs.gender === 'female' && (
+              <ToggleRow name="women_courts_only" label="Women courts only" defaultChecked={prefs.women_courts_only} />
+            )}
+          </div>
+        </div>
 
         {saved && (
           <p className="text-sm text-success-text bg-success-bg rounded-xl px-3 py-2 border border-success-text/20">
@@ -91,27 +72,28 @@ export function SettingsForm({ prefs }: { prefs: Prefs }) {
         <button
           type="submit"
           disabled={savePending}
-          className="w-full h-[56px] border-2 border-black bg-brand text-white rounded-[16px] font-heading font-extrabold italic text-[22px] uppercase shadow-[4px_4px_0_#111] disabled:opacity-50 transition-opacity"
+          className="w-full h-[52px] border-2 border-black bg-brand text-white rounded-[16px] font-heading font-extrabold italic text-[22px] uppercase shadow-[4px_4px_0_#111] disabled:opacity-50 transition-opacity"
         >
           {savePending ? 'Saving…' : 'SAVE PREFERENCES'}
         </button>
       </form>
 
       {/* Danger zone */}
-      <Section title="Account">
-        <div className="p-4 flex flex-col gap-3">
-          <p className="text-sm text-body leading-relaxed">
-            Deleting your account will anonymise your profile data. Your match history will be preserved but your name and contact details will be removed. This action cannot be undone.
-          </p>
+      <div className="bg-white border-2 border-black rounded-[18px] overflow-hidden">
+        <div className="px-4 py-2 border-b-2 border-black bg-muted">
+          <p className="text-xs font-extrabold uppercase tracking-widest text-body">Account</p>
+        </div>
+        <div className="px-4 py-3 flex items-center justify-between gap-3">
+          <p className="text-xs text-body leading-snug flex-1">Anonymises your profile. Cannot be undone.</p>
           <button
             type="button"
             onClick={() => setShowDelete(true)}
-            className="w-full h-[52px] border-2 border-danger-text bg-danger-bg text-danger-text rounded-[14px] font-heading font-extrabold italic text-xl uppercase"
+            className="shrink-0 h-9 px-4 border-2 border-danger-text bg-danger-bg text-danger-text rounded-[10px] font-heading font-extrabold italic text-sm uppercase"
           >
-            DELETE ACCOUNT
+            DELETE
           </button>
         </div>
-      </Section>
+      </div>
 
       <ConfirmDialog
         open={showDelete}
@@ -126,37 +108,21 @@ export function SettingsForm({ prefs }: { prefs: Prefs }) {
   )
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="bg-white border-2 border-black rounded-[18px] overflow-hidden">
-      <div className="px-4 py-3 border-b-2 border-black bg-muted">
-        <p className="text-xs font-extrabold uppercase tracking-widest text-body">{title}</p>
-      </div>
-      <div className="divide-y-2 divide-black">
-        {children}
-      </div>
-    </div>
-  )
-}
-
 function ToggleRow({
   name,
   label,
-  description,
   defaultChecked,
 }: {
   name: string
   label: string
-  description?: string
   defaultChecked: boolean
 }) {
   const [on, setOn] = useState(defaultChecked)
 
   return (
-    <div className="flex items-center justify-between px-4 py-3.5 gap-3">
+    <div className="flex items-center justify-between px-4 py-3 gap-3">
       <div className="flex-1">
         <p className="text-sm font-semibold">{label}</p>
-        {description && <p className="text-xs text-body mt-0.5">{description}</p>}
       </div>
       <button
         type="button"

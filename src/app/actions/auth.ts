@@ -34,10 +34,12 @@ export async function signUp(formData: FormData) {
 
   const { data: { user } } = await supabase.auth.getUser()
   if (user) {
-    await supabase.from('profiles').upsert({
+    const admin = createAdminClient()
+    await admin.from('profiles').upsert({
       id: user.id,
       name,
       phone,
+      email: null,
       gender: gender as 'male' | 'female',
       pdpa_consent_at: new Date().toISOString(),
     }, { onConflict: 'id' })
