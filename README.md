@@ -29,6 +29,10 @@ A mobile-first pickleball queue management PWA. Players check in at the venue, j
 - Realtime queue and court updates via Supabase Realtime
 - Push notifications for court assignment
 - PWA: installable, service worker registered on load
+- Privacy policy page at `/privacy` (public, no auth required)
+- Consistent empty states across all tabs (courts, queue, events, history)
+- Guest header: Sign In button instead of avatar
+- Desktop: narrow 430px column centred on `bg-zinc-800` background
 
 ## What's left to build
 
@@ -58,6 +62,7 @@ src/
       profile/      # Profile, edit, settings, FAQ
     (admin)/        # Admin-only pages
     (auth)/         # Login, signup
+    privacy/        # Privacy policy (public)
     actions/        # Server actions (all mutations)
   components/
     layout/         # Header, BottomNav
@@ -103,6 +108,29 @@ Schema is managed directly in the Supabase dashboard (no CLI migrations). Core t
 
 Key RPCs: `fill_courts`, `promote_waitlist`, `venue_checkin`, `join_queue`, `end_session`, `handle_no_shows`, `start_session`
 
+### Required RLS setup
+
+After creating the database, run this in the Supabase SQL editor:
+
+```sql
+-- Table-level grants (required before RLS policies take effect)
+GRANT SELECT ON public.profiles TO authenticated;
+GRANT UPDATE ON public.profiles TO authenticated;
+GRANT SELECT ON public.profiles TO anon;
+
+-- RLS policies for profiles
+CREATE POLICY "profiles_auth_select"
+  ON public.profiles FOR SELECT TO authenticated
+  USING (deleted_at IS NULL);
+
+CREATE POLICY "profiles_auth_update_own"
+  ON public.profiles FOR UPDATE TO authenticated
+  USING (id = auth.uid())
+  WITH CHECK (id = auth.uid());
+```
+
+Without these, the profile page will show blank data even if the database has rows.
+
 ## Setup
 
 1. Create a Supabase project
@@ -123,7 +151,8 @@ Generate VAPID keys:
 npx web-push generate-vapid-keys
 ```
 
-4. Run the dev server: `npm run dev`
+4. Apply the RLS setup SQL above in the Supabase dashboard
+5. Run the dev server: `npm run dev`
 
 ## Scripts
 
@@ -140,7 +169,9 @@ Users sign up with a phone number and password. Internally, a synthetic email (`
 
 ## Design
 
-Neobrutalist style: 2px black borders, hard drop shadows (`4px 4px 0 #111`), yellow accents, Barlow Condensed for headings. Design tokens are in `src/app/globals.css`.
+Neobrutalist style: 2px black borders, hard drop shadows (`4px 4px 0 #111`), yellow accents (`#FFC72C`), brand red (`#D2281F`), Barlow Condensed for headings. Design tokens are in `src/app/globals.css`.
+
+Empty states across all tabs follow a consistent pattern: dark hero card, red CTA button, then individual feature cards with coloured icon circles (yellow/red/black).
 
 ## Roles
 
@@ -155,3 +186,5 @@ Roles are set directly in the database (`profiles.role`), never from the client.
 ## Deployment
 
 Connected to Vercel. Push to `main` triggers a production deploy automatically.
+
+Make sure `SUPABASE_SERVICE_ROLE_KEY` is set in Vercel environment variables — the app layout and admin actions depend on it.
