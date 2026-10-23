@@ -3,6 +3,7 @@ import { StatusPill } from '@/components/ui/StatusPill'
 import { EndMatchForm } from './EndMatchForm'
 import { CourtTypeSelect } from './CourtTypeSelect'
 import { StartSessionButton } from './StartSessionButton'
+import { formatDate, formatTime } from '@/lib/format'
 import Link from 'next/link'
 
 type Session = { id: string; name: string } | null
@@ -12,22 +13,6 @@ type UpcomingSession = {
   name: string
   date: string
   start_time: string
-}
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-SG', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  })
-}
-
-function formatTime(ts: string) {
-  return new Date(ts).toLocaleTimeString('en-SG', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  })
 }
 
 export async function AdminCourtsTab({

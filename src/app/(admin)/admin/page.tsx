@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { AdminCourtsTab } from './AdminCourtsTab'
 import { AdminQueueTab } from './AdminQueueTab'
 import { AdminCheckinTab } from './AdminCheckinTab'
+import { EndSessionButton, HandleNoShowsButton } from './EndSessionButton'
 
 export default async function AdminPage({
   searchParams,
@@ -63,14 +64,18 @@ export default async function AdminPage({
         ))}
       </div>
 
-      {/* Session info */}
+      {/* Session info + end session */}
       {session && (
         <div className="bg-black text-white rounded-[18px] px-4 py-3 flex items-center justify-between">
           <div>
             <p className="font-bold text-sm">{session.name}</p>
             <p className="text-xs text-[#BDB9AF]">Live session</p>
           </div>
-          <div className="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse" />
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[#4ade80] animate-pulse" />
+            <HandleNoShowsButton sessionId={session.id} />
+            <EndSessionButton sessionId={session.id} />
+          </div>
         </div>
       )}
 

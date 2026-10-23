@@ -1,6 +1,6 @@
 'use client'
 import { useState, useTransition } from 'react'
-import { endMatch } from '@/app/actions/sessions'
+import { endMatch } from '@/app/actions/admin'
 
 export function EndMatchForm({ matchId }: { matchId: string }) {
   const [open, setOpen] = useState(false)

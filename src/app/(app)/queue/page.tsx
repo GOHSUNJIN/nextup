@@ -1,145 +1,99 @@
 export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { QueueView } from './QueueView'
+import type { QueueStateType, MatchData } from '@/types/queue'
 
-export type QueueStateType =
-  | 'no_session'
-  | 'not_checked_in'
-  | 'join'
-  | 'waiting'
-  | 'assigned'
-  | 'playing'
-  | 'finished'
-  | 'on_break'
-  | 'away'
+export type { QueueStateType, MatchData }
 
-export type MatchData = {
-  matchId: string
-  courtName: string
-  courtType: string
-  teamA: string[]
-  teamB: string[]
-  startedAt: string | null
-  endedAt: string | null
-  scoreA: number | null
-  scoreB: number | null
-  playerTeam: string
-}
+const ACTIVE_STATUSES = ['waiting', 'standby'] as const
+const MATCH_STATUSES = ['assigned', 'playing', 'finished'] as const
 
 export default async function QueuePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
   if (!user) redirect('/login?next=/queue')
 
   const { data: session } = await supabase
     .from('sessions')
     .select('id, name, start_time, end_time, max_players, status')
-    .eq('status', 'live')
+    .in('status', ['live', 'ended'])
+    .order('start_time', { ascending: false })
+    .limit(1)
     .maybeSingle()
 
   if (!session) {
-    return (
-      <QueueView
-        initialState="no_session"
-        session={null}
-        entry={null}
-        position={null}
-        totalWaiting={null}
-        matchData={null}
-      />
-    )
+    return <QueueView initialState="no_session" session={null} entry={null} position={null} totalWaiting={null} matchData={null} waitlistPosition={null} />
   }
 
-  // Check venue check-in
+  if (session.status === 'ended') {
+    const { data: wasIn } = await supabase
+      .from('queue_entries').select('id')
+      .eq('session_id', session.id).eq('player_id', user.id).maybeSingle()
+
+    const state = wasIn ? 'session_ended' : 'no_session'
+    return <QueueView initialState={state} session={wasIn ? session : null} entry={null} position={null} totalWaiting={null} matchData={null} waitlistPosition={null} />
+  }
+
   const { data: checkin } = await supabase
-    .from('session_checkins')
-    .select('checked_in_at')
-    .eq('session_id', session.id)
-    .eq('player_id', user.id)
-    .maybeSingle()
+    .from('session_checkins').select('checked_in_at')
+    .eq('session_id', session.id).eq('player_id', user.id).maybeSingle()
 
   if (!checkin) {
-    return (
-      <QueueView
-        initialState="not_checked_in"
-        session={session}
-        entry={null}
-        position={null}
-        totalWaiting={null}
-        matchData={null}
-      />
-    )
+    return <QueueView initialState="not_checked_in" session={session} entry={null} position={null} totalWaiting={null} matchData={null} waitlistPosition={null} />
   }
 
-  // Get queue entry
   const { data: entry } = await supabase
     .from('queue_entries')
-    .select('id, status, queue_position, checkin_deadline, break_started_at, finished_at, prompt_seen_at')
-    .eq('session_id', session.id)
-    .eq('player_id', user.id)
-    .maybeSingle()
+    .select('id, status, queue_position, checkin_deadline, break_started_at, finished_at, prompt_seen_at, requeue_deadline')
+    .eq('session_id', session.id).eq('player_id', user.id).maybeSingle()
 
   if (!entry || entry.status === 'left') {
-    return (
-      <QueueView
-        initialState="join"
-        session={session}
-        entry={null}
-        position={null}
-        totalWaiting={null}
-        matchData={null}
-      />
-    )
+    return <QueueView initialState="join" session={session} entry={null} position={null} totalWaiting={null} matchData={null} waitlistPosition={null} />
   }
 
+  const admin = createAdminClient()
   let position: number | null = null
   let totalWaiting: number | null = null
+  let waitlistPosition: number | null = null
   let matchData: MatchData | null = null
 
-  if (entry.status === 'waiting') {
-    const { count: ahead } = await supabase
-      .from('queue_entries')
-      .select('id', { count: 'exact', head: true })
-      .eq('session_id', session.id)
-      .eq('status', 'waiting')
-      .lt('queue_position', entry.queue_position)
-    position = (ahead ?? 0) + 1
-
-    const { count: total } = await supabase
-      .from('queue_entries')
-      .select('id', { count: 'exact', head: true })
-      .eq('session_id', session.id)
-      .eq('status', 'waiting')
-    totalWaiting = total ?? 0
+  if ((ACTIVE_STATUSES as readonly string[]).includes(entry.status)) {
+    const [aheadResult, totalResult] = await Promise.all([
+      admin.from('queue_entries').select('id', { count: 'exact', head: true })
+        .eq('session_id', session.id).in('status', ['waiting', 'standby'])
+        .lt('queue_position', entry.queue_position),
+      admin.from('queue_entries').select('id', { count: 'exact', head: true })
+        .eq('session_id', session.id).in('status', ['waiting', 'standby']),
+    ])
+    position = (aheadResult.count ?? 0) + 1
+    totalWaiting = totalResult.count ?? 0
   }
 
-  if (['assigned', 'playing', 'finished'].includes(entry.status)) {
-    // Find the most-recent match for this player in this session
+  if (entry.status === 'waitlist') {
+    const { count } = await admin
+      .from('queue_entries').select('id', { count: 'exact', head: true })
+      .eq('session_id', session.id).eq('status', 'waitlist')
+      .lt('queue_position', entry.queue_position)
+    waitlistPosition = (count ?? 0) + 1
+  }
+
+  if ((MATCH_STATUSES as readonly string[]).includes(entry.status)) {
     const { data: mp } = await supabase
-      .from('match_players')
-      .select('match_id, team')
+      .from('match_players').select('match_id, team')
       .eq('player_id', user.id)
-      .order('match_id', { ascending: false })
-      .limit(1)
-      .maybeSingle()
+      .order('match_id', { ascending: false }).limit(1).maybeSingle()
 
     if (mp) {
       const { data: match } = await supabase
-        .from('matches')
-        .select('id, court_id, team_a, team_b, started_at, ended_at, score_a, score_b')
-        .eq('id', mp.match_id)
-        .single()
+        .from('matches').select('id, court_id, team_a, team_b, started_at, ended_at, score_a, score_b')
+        .eq('id', mp.match_id).single()
 
       if (match) {
         const { data: court } = await supabase
-          .from('courts')
-          .select('name, type')
-          .eq('id', match.court_id)
-          .single()
-
+          .from('courts').select('name, type').eq('id', match.court_id).single()
         matchData = {
           matchId: match.id,
           courtName: court?.name ?? 'Court',
@@ -157,12 +111,9 @@ export default async function QueuePage() {
   }
 
   const stateMap: Record<string, QueueStateType> = {
-    waiting: 'waiting',
-    assigned: 'assigned',
-    playing: 'playing',
-    finished: 'finished',
-    on_break: 'on_break',
-    away: 'away',
+    waiting: 'waiting', standby: 'standby', waitlist: 'waitlist',
+    assigned: 'assigned', playing: 'playing', finished: 'finished',
+    on_break: 'on_break', away: 'away',
   }
 
   return (
@@ -173,6 +124,7 @@ export default async function QueuePage() {
       position={position}
       totalWaiting={totalWaiting}
       matchData={matchData}
+      waitlistPosition={waitlistPosition}
     />
   )
 }

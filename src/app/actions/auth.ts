@@ -102,15 +102,17 @@ export async function updateProfile(formData: FormData) {
 
   const name = (formData.get('name') as string).trim()
   const phone = (formData.get('phone') as string).trim() || null
+  const gender = (formData.get('gender') as string) || undefined
+  const avatarUrl = (formData.get('avatar_url') as string).trim() || undefined
 
   if (!name) return { error: 'Name is required.' }
 
-  // Upsert so it works even if the profile row was never created
+  const updateData: Record<string, unknown> = { id: user.id, name, phone }
+  if (gender) updateData.gender = gender
+  if (avatarUrl !== undefined) updateData.avatar_url = avatarUrl || null
+
   const admin = createAdminClient()
-  const { error } = await admin.from('profiles').upsert(
-    { id: user.id, name, phone },
-    { onConflict: 'id' }
-  )
+  const { error } = await admin.from('profiles').upsert(updateData, { onConflict: 'id' })
   if (error) {
     if (error.code === '23505') return { error: 'That phone number is already linked to another account.' }
     return { error: error.message }

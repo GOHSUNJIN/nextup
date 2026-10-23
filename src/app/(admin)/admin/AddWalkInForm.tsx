@@ -1,6 +1,6 @@
 'use client'
 import { useState, useTransition } from 'react'
-import { addWalkIn } from '@/app/actions/sessions'
+import { addWalkIn } from '@/app/actions/admin'
 
 export function AddWalkInForm({ sessionId }: { sessionId: string }) {
   const [name, setName] = useState('')

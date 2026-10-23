@@ -13,9 +13,17 @@ export default async function EditProfilePage() {
   const admin = createAdminClient()
   const { data: profile } = await admin
     .from('profiles')
-    .select('name, phone')
+    .select('name, phone, gender, avatar_url')
     .eq('id', user.id)
     .single()
 
-  return <EditProfileForm name={profile?.name ?? ''} phone={profile?.phone ?? ''} />
+  return (
+    <EditProfileForm
+      name={profile?.name ?? ''}
+      phone={profile?.phone ?? ''}
+      gender={profile?.gender ?? 'male'}
+      avatarUrl={profile?.avatar_url ?? null}
+      userId={user.id}
+    />
+  )
 }

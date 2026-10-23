@@ -1,7 +1,7 @@
 'use client'
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { createEvent } from '@/app/actions/sessions'
+import { createEvent } from '@/app/actions/admin'
 
 export default function CreateEventPage() {
   const [error, setError] = useState<string | null>(null)

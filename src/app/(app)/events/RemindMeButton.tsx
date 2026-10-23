@@ -1,6 +1,6 @@
 'use client'
 import { useState, useTransition } from 'react'
-import { toggleReminder } from '@/app/actions/sessions'
+import { toggleReminder } from '@/app/actions/events'
 
 export function RemindMeButton({ sessionId, initialState }: { sessionId: string; initialState: boolean }) {
   const [reminded, setReminded] = useState(initialState)

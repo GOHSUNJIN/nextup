@@ -3,29 +3,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
+import { sendPushToPlayers } from '@/lib/push'
 
-export async function venueCheckIn(sessionId: string, code: string) {
-  const supabase = await createClient()
-  const { data, error } = await supabase.rpc('validate_checkin_code', {
-    p_session_id: sessionId,
-    p_code: code.toUpperCase().trim(),
-  })
-  if (error) return { error: error.message }
-  const result = data as { success: boolean; error?: string }
-  if (!result.success) {
-    if (result.error === 'invalid_or_expired_code') return { error: 'Invalid or expired code. Ask the admin for the current code.' }
-    if (result.error === 'session_not_live') return { error: 'This session is not live yet.' }
-    return { error: result.error ?? 'Check-in failed.' }
-  }
-  revalidatePath('/queue')
-}
-
-export async function joinQueue(sessionId: string) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Not signed in' }
-
-  // Get max position
+async function getNextQueuePosition(supabase: Awaited<ReturnType<typeof createClient>>, sessionId: string) {
   const { data: last } = await supabase
     .from('queue_entries')
     .select('queue_position')
@@ -33,8 +13,39 @@ export async function joinQueue(sessionId: string) {
     .order('queue_position', { ascending: false })
     .limit(1)
     .maybeSingle()
+  return (last?.queue_position ?? 0) + 1
+}
 
-  const queuePosition = (last?.queue_position ?? 0) + 1
+async function notifyAssigned(sessionId: string) {
+  const admin = createAdminClient()
+  const { data: newly } = await admin
+    .from('queue_entries')
+    .select('player_id')
+    .eq('session_id', sessionId)
+    .eq('status', 'assigned')
+  if (newly?.length) {
+    await sendPushToPlayers(
+      newly.map((p: { player_id: string }) => p.player_id),
+      { title: "You're up!", body: 'Head to your court — 3 minutes to check in.', url: '/queue' }
+    )
+  }
+}
+
+export async function joinQueue(sessionId: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not signed in' }
+
+  const queuePosition = await getNextQueuePosition(supabase, sessionId)
+
+  const [sessionResult, countResult] = await Promise.all([
+    supabase.from('sessions').select('max_players').eq('id', sessionId).single(),
+    supabase.from('queue_entries').select('id', { count: 'exact', head: true })
+      .eq('session_id', sessionId)
+      .in('status', ['waiting', 'assigned', 'standby', 'playing', 'on_break']),
+  ])
+
+  const isWaitlist = sessionResult.data && (countResult.count ?? 0) >= sessionResult.data.max_players
 
   const { error } = await supabase
     .from('queue_entries')
@@ -42,7 +53,7 @@ export async function joinQueue(sessionId: string) {
       session_id: sessionId,
       player_id: user.id,
       mode: 'solo',
-      status: 'waiting',
+      status: isWaitlist ? 'waitlist' : 'waiting',
       queue_position: queuePosition,
       joined_at: new Date().toISOString(),
       skip_count: 0,
@@ -50,12 +61,15 @@ export async function joinQueue(sessionId: string) {
 
   if (error) return { error: error.message }
 
-  // Try to fill courts
-  const admin = createAdminClient()
-  await admin.rpc('fill_courts', { p_session_id: sessionId })
+  if (!isWaitlist) {
+    const admin = createAdminClient()
+    await admin.rpc('fill_courts', { p_session_id: sessionId })
+    await notifyAssigned(sessionId)
+  }
 
   revalidatePath('/queue')
   revalidatePath('/courts')
+  return { waitlist: isWaitlist }
 }
 
 export async function leaveQueue(sessionId: string) {
@@ -68,54 +82,12 @@ export async function leaveQueue(sessionId: string) {
     .update({ status: 'left' })
     .eq('session_id', sessionId)
     .eq('player_id', user.id)
-    .in('status', ['waiting'])
+    .in('status', ['waiting', 'waitlist'])
+
+  const admin = createAdminClient()
+  await admin.rpc('promote_waitlist', { p_session_id: sessionId })
 
   revalidatePath('/queue')
-}
-
-export async function playerCheckIn(matchId: string) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Not signed in' }
-
-  // Record check-in
-  await supabase
-    .from('match_players')
-    .update({ checked_in_at: new Date().toISOString() })
-    .eq('match_id', matchId)
-    .eq('player_id', user.id)
-
-  // Check if all 4 checked in
-  const { data: players } = await supabase
-    .from('match_players')
-    .select('checked_in_at')
-    .eq('match_id', matchId)
-
-  const allCheckedIn = players?.every(p => p.checked_in_at) ?? false
-
-  if (allCheckedIn) {
-    const now = new Date().toISOString()
-    // Start match
-    await supabase.from('matches').update({ started_at: now }).eq('id', matchId)
-    // Update court to playing
-    const { data: match } = await supabase
-      .from('matches')
-      .select('court_id, session_id, team_a, team_b')
-      .eq('id', matchId)
-      .single()
-    if (match) {
-      await supabase.from('courts').update({ status: 'playing' }).eq('id', match.court_id)
-      const allPlayers = [...(match.team_a ?? []), ...(match.team_b ?? [])]
-      await supabase.from('queue_entries').update({ status: 'playing' })
-        .eq('session_id', match.session_id)
-        .in('player_id', allPlayers)
-        .eq('status', 'assigned')
-    }
-  }
-
-  revalidatePath('/queue')
-  revalidatePath('/courts')
-  revalidatePath('/admin')
 }
 
 export async function requeueOrBreak(sessionId: string, choice: 'requeue' | 'break') {
@@ -124,16 +96,7 @@ export async function requeueOrBreak(sessionId: string, choice: 'requeue' | 'bre
   if (!user) return { error: 'Not signed in' }
 
   if (choice === 'requeue') {
-    // Get max position
-    const { data: last } = await supabase
-      .from('queue_entries')
-      .select('queue_position')
-      .eq('session_id', sessionId)
-      .order('queue_position', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-
-    const queuePosition = (last?.queue_position ?? 0) + 1
+    const queuePosition = await getNextQueuePosition(supabase, sessionId)
 
     await supabase.from('queue_entries').update({
       status: 'waiting',
@@ -141,22 +104,29 @@ export async function requeueOrBreak(sessionId: string, choice: 'requeue' | 'bre
       joined_at: new Date().toISOString(),
       finished_at: null,
       prompt_seen_at: null,
+      requeue_deadline: null,
       skip_count: 0,
     })
       .eq('session_id', sessionId)
       .eq('player_id', user.id)
-      .eq('status', 'finished')
+      .in('status', ['finished'])
 
     const admin = createAdminClient()
     await admin.rpc('fill_courts', { p_session_id: sessionId })
+    await notifyAssigned(sessionId)
   } else {
     await supabase.from('queue_entries').update({
       status: 'on_break',
       break_started_at: new Date().toISOString(),
+      requeue_deadline: null,
+      prompt_seen_at: null,
     })
       .eq('session_id', sessionId)
       .eq('player_id', user.id)
-      .eq('status', 'finished')
+      .in('status', ['finished'])
+
+    const admin = createAdminClient()
+    await admin.rpc('promote_waitlist', { p_session_id: sessionId })
   }
 
   revalidatePath('/queue')
@@ -167,15 +137,7 @@ export async function rejoinQueue(sessionId: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Not signed in' }
 
-  const { data: last } = await supabase
-    .from('queue_entries')
-    .select('queue_position')
-    .eq('session_id', sessionId)
-    .order('queue_position', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-
-  const queuePosition = (last?.queue_position ?? 0) + 1
+  const queuePosition = await getNextQueuePosition(supabase, sessionId)
 
   await supabase.from('queue_entries').update({
     status: 'waiting',
@@ -190,6 +152,7 @@ export async function rejoinQueue(sessionId: string) {
 
   const admin = createAdminClient()
   await admin.rpc('fill_courts', { p_session_id: sessionId })
+  await notifyAssigned(sessionId)
 
   revalidatePath('/queue')
 }
@@ -204,5 +167,13 @@ export async function markDone(sessionId: string) {
     .eq('player_id', user.id)
     .in('status', ['on_break', 'away', 'finished'])
 
+  const admin = createAdminClient()
+  await admin.rpc('promote_waitlist', { p_session_id: sessionId })
+
   revalidatePath('/queue')
+}
+
+export async function markPromptSeen(sessionId: string) {
+  const supabase = await createClient()
+  await supabase.rpc('mark_prompt_seen', { p_session_id: sessionId })
 }

@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { startSession } from '@/app/actions/sessions'
+import { startSession } from '@/app/actions/admin'
 
 export function StartSessionButton({ sessionId }: { sessionId: string }) {
   const [pending, startTransition] = useTransition()

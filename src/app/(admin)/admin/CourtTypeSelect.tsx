@@ -1,6 +1,6 @@
 'use client'
 import { useTransition } from 'react'
-import { changeCourtType } from '@/app/actions/sessions'
+import { changeCourtType } from '@/app/actions/admin'
 
 const TYPES = ['open', 'strong', 'casual', 'women', 'mixed'] as const
 
