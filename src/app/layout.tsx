@@ -58,12 +58,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
       lang="en"
       className={`${inter.variable} ${barlowCondensed.variable} ${luckiestGuy.variable}`}
     >
-      <body className="bg-zinc-800">
+      <body className="bg-zinc-800 min-h-screen">
         <SplashScreen />
-        <div className="flex justify-center min-h-screen bg-zinc-800">
-          <div className="relative w-full max-w-[430px] overflow-hidden bg-bg min-h-screen">
-            {children}
-          </div>
+        <div className="relative mx-auto w-full max-w-[430px] overflow-hidden bg-bg min-h-screen">
+          {children}
         </div>
       </body>
     </html>
