@@ -18,7 +18,7 @@ export default function SignUpPage() {
     })
   }
 
-  const input = "h-11 rounded-[12px] border-2 border-black/20 bg-white/10 text-white placeholder-white/40 px-3.5 text-sm font-medium outline-none focus:border-yellow focus:bg-white/15 transition-colors"
+  const input = "h-11 rounded-[12px] border-2 border-black/20 bg-white/10 text-white placeholder-white/40 px-3.5 pr-11 text-sm font-medium outline-none focus:border-yellow focus:bg-white/15 transition-colors"
 
   return (
     <div className="flex flex-col gap-4">

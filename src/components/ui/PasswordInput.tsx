@@ -2,14 +2,15 @@
 import { useState } from 'react'
 
 interface Props {
-  id: string
+  id?: string
   name: string
   placeholder?: string
   autoComplete?: string
   minLength?: number
+  className?: string
 }
 
-export function PasswordInput({ id, name, placeholder, autoComplete, minLength }: Props) {
+export function PasswordInput({ id, name, placeholder, autoComplete, minLength, className }: Props) {
   const [show, setShow] = useState(false)
   return (
     <div className="relative">
@@ -21,7 +22,7 @@ export function PasswordInput({ id, name, placeholder, autoComplete, minLength }
         autoComplete={autoComplete}
         minLength={minLength}
         placeholder={placeholder}
-        className="h-12 w-full rounded-[12px] border-2 border-black bg-white px-3.5 pr-11 text-sm font-medium outline-none focus:ring-2 focus:ring-black"
+        className={className ?? "h-12 w-full rounded-[12px] border-2 border-black bg-white px-3.5 pr-11 text-sm font-medium outline-none focus:ring-2 focus:ring-black"}
       />
       <button
         type="button"
